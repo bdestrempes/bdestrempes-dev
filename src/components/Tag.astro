@@ -1,0 +1,34 @@
+---
+import { badgeVariants } from '@/components/ui/badge'
+import { getTagColor } from '@/lib/tags'
+import { cn } from '@/lib/utils'
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+  name: string
+  href?: string
+  class?: string
+  showHash?: boolean
+}
+
+const {
+  name,
+  href = `/tags/${name}`,
+  class: className,
+  showHash = true,
+} = Astro.props
+---
+
+<a
+  href={href}
+  class={cn(
+    badgeVariants({ variant: 'outline' }),
+    getTagColor(name),
+    'transition-colors hover:bg-opacity-80',
+    className,
+  )}
+>
+  {showHash && <Icon name="lucide:hash" class="size-3 -translate-x-0.5" />}
+  {name}
+  <slot />
+</a>

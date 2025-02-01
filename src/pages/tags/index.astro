@@ -1,0 +1,43 @@
+---
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import Container from '@/components/Container.astro'
+import Tag from '@/components/Tag.astro'
+import Layout from '@/layouts/Layout.astro'
+import { getCollection } from 'astro:content'
+
+const articles = (await getCollection('articles')).filter(
+  (post) => !post.data.draft,
+)
+
+const tagCounts = articles.reduce((acc, post) => {
+  post.data.tags?.forEach((tag) => {
+    acc.set(tag, (acc.get(tag) || 0) + 1)
+  })
+  return acc
+}, new Map())
+
+const tags = [...tagCounts.keys()].sort((a, b) => {
+  const countDiff = tagCounts.get(b)! - tagCounts.get(a)!
+  return countDiff !== 0 ? countDiff : a.localeCompare(b)
+})
+---
+
+<Layout title="Tags" description="A list of all tags used in blog posts">
+  <Container class="flex flex-col gap-y-6">
+    <Breadcrumbs items={[{ label: 'Tags', icon: 'lucide:tags' }]} />
+
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-wrap gap-2">
+        {
+          tags.map((tag) => (
+            <Tag name={tag}>
+              <span class="ml-1.5 text-muted-foreground">
+                ({tagCounts.get(tag)})
+              </span>
+            </Tag>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+</Layout>

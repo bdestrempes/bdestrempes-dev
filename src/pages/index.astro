@@ -1,0 +1,93 @@
+---
+import BlogCard from '@/components/BlogCard.astro'
+import Container from '@/components/Container.astro'
+import Link from '@/components/Link.astro'
+import { buttonVariants } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { SITE } from '@/consts'
+import Layout from '@/layouts/Layout.astro'
+import { getCollection } from 'astro:content'
+import 'rehype-callouts/theme/github'
+
+const articles = (await getCollection('articles'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, SITE.NUM_POSTS_ON_HOMEPAGE)
+---
+
+<Layout title="Home" description={SITE.DESCRIPTION}>
+  <Container class="flex flex-col gap-y-6">
+    <section>
+      <Card>
+        <CardHeader>
+          <div class="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-3xl">👋 Hey, I'm Ben</CardTitle>
+              <CardDescription
+                >Senior Developer @ <span class="font-semibold"
+                  ><Link href="https://shopify.com" external underline
+                    >Shopify</Link
+                  ></span
+                ></CardDescription
+              >
+            </div>
+            <img
+              src="/bdestrempes-avatar.jpg"
+              alt="Benjamin Destrempes"
+              class="h-16 w-16 rounded-full object-cover"
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p class="mb-2 text-sm text-muted-foreground">
+            👨‍💻 Hey! I'm a frontend dev working from the beautiful Saguenay
+            region in QC, Canada. I love building fast, modern web apps and
+            tools that don't suck. These days, I'm crafting e-commerce
+            experiences at <Link href="https://shopify.com" external underline
+              >Shopify</Link
+            >.
+          </p>
+          <p class="text-sm text-muted-foreground">
+            🏔️ Outside of work, I'm probably shredding down a mountain somewhere
+            (on skis or a bike, depending on the season). I geek out about web
+            frameworks, dev tools, and sharing what I learn along the way. Take
+            a peek at my <Link
+              href="/articles"
+              class="text-foreground"
+              underline>articles</Link
+            > if you're into that kind of stuff!
+          </p>
+        </CardContent>
+      </Card>
+    </section>
+    <section class="flex flex-col gap-y-4">
+      <h2 class="text-2xl font-bold">Latest posts</h2>
+      <ul class="not-prose flex flex-col gap-y-4">
+        {
+          articles.map((post) => (
+            <li>
+              <BlogCard entry={post} />
+            </li>
+          ))
+        }
+      </ul>
+      <div class="flex justify-center">
+        <Link
+          href="/articles"
+          class={buttonVariants({ variant: 'ghost' }) + ' group'}
+        >
+          See all posts <span
+            class="ml-1.5 transition-transform group-hover:translate-x-1"
+            >&rarr;</span
+          >
+        </Link>
+      </div>
+    </section>
+  </Container>
+</Layout>
