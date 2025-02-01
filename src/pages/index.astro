@@ -15,7 +15,7 @@ import Layout from '@/layouts/Layout.astro'
 import { getCollection } from 'astro:content'
 import 'rehype-callouts/theme/github'
 
-const blog = (await getCollection('blog'))
+const articles = (await getCollection('articles'))
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, SITE.NUM_POSTS_ON_HOMEPAGE)
@@ -46,10 +46,10 @@ const blog = (await getCollection('blog'))
         </CardHeader>
         <CardContent>
           <p class="mb-2 text-sm text-muted-foreground">
-            👨‍💻 I'm a senior frontend developer based in Saguenay, Quebec. With a
-            strong background in web development, I specialize in building
-            modern, performant web applications. Currently, I'm focused on
-            e-commerce solutions at <Link
+            👨‍💻 I'm a senior frontend developer based in Saguenay, Quebec,
+            Canada. With a strong background in web development, I specialize in
+            building modern, performant web applications. Currently, I'm focused
+            on e-commerce solutions at <Link
               href="https://shopify.com"
               external
               underline>Shopify</Link
@@ -61,9 +61,9 @@ const blog = (await getCollection('blog'))
             all around the world. 🌏 I'm passionate about modern web frameworks,
             developer tooling, and creating content to share knowledge with the
             developer community. Check out my <Link
-              href="/blog"
+              href="/articles"
               class="text-foreground"
-              underline>blog</Link
+              underline>articles</Link
             > for technical insights and development tips!
           </p>
         </CardContent>
@@ -73,7 +73,7 @@ const blog = (await getCollection('blog'))
       <h2 class="text-2xl font-bold">Latest posts</h2>
       <ul class="not-prose flex flex-col gap-y-4">
         {
-          blog.map((post) => (
+          articles.map((post) => (
             <li>
               <BlogCard entry={post} />
             </li>
@@ -82,7 +82,7 @@ const blog = (await getCollection('blog'))
       </ul>
       <div class="flex justify-center">
         <Link
-          href="/blog"
+          href="/articles"
           class={buttonVariants({ variant: 'ghost' }) + ' group'}
         >
           See all posts <span

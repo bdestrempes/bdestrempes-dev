@@ -5,12 +5,12 @@ import { getCollection } from 'astro:content'
 
 export async function GET(context: APIContext) {
   try {
-    const blog = (await getCollection('blog')).filter(
+    const articles = (await getCollection('articles')).filter(
       (post) => !post.data.draft,
     )
 
     // Sort posts by date
-    const items = [...blog].sort(
+    const items = [...articles].sort(
       (a, b) =>
         new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf(),
     )
