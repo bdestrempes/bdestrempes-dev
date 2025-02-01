@@ -26,13 +26,23 @@ const blog = (await getCollection('blog'))
     <section>
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl">👋 Hey, I'm Ben</CardTitle>
-          <CardDescription
-            >Senior Developer @ <span class="font-semibold"
-              ><Link href="https://shopify.com" external underline>Shopify</Link
-              ></span
-            ></CardDescription
-          >
+          <div class="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-3xl">👋 Hey, I'm Ben</CardTitle>
+              <CardDescription
+                >Senior Developer @ <span class="font-semibold"
+                  ><Link href="https://shopify.com" external underline
+                    >Shopify</Link
+                  ></span
+                ></CardDescription
+              >
+            </div>
+            <img
+              src="/bdestrempes-avatar.jpg"
+              alt="Benjamin Destrempes"
+              class="h-16 w-16 rounded-full object-cover"
+            />
+          </div>
         </CardHeader>
         <CardContent>
           <p class="mb-2 text-sm text-muted-foreground">
