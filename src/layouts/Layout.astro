@@ -5,6 +5,7 @@ import Header from '@/components/Header.astro'
 import { SITE } from '@/consts'
 import '@fontsource-variable/fira-code'
 import '@fontsource/fira-sans'
+import Analytics from '@vercel/analytics/astro'
 
 type Props = {
   title: string
@@ -16,6 +17,7 @@ const { title, description, image } = Astro.props
 ---
 
 <!doctype html>
+<Analytics />
 <html lang="en">
   <head>
     <Head
