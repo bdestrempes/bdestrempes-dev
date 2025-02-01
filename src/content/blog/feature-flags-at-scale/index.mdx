@@ -1,0 +1,469 @@
+---
+title: 'Implementing Feature Flags at Scale'
+description: 'Part 2 of our feature flags series: Exploring approaches to implement feature flag systems that scale with your application'
+date: 2025-02-02
+tags: ['architecture', 'best-practices', 'devops', 'feature-flags']
+series: 'feature-flags'
+draft: true
+---
+
+# Implementing Feature Flags at Scale
+
+_This is Part 2 of our [comprehensive guide to feature flags](/blog/feature-flags-series-introduction). In this article, we'll explore different approaches to implementing feature flags in larger applications._
+
+After exploring the [fundamentals of feature flags](/blog/feature-flags-fundamentals), let's look at various ways to implement a system that can grow with your application. We'll examine patterns and practices that teams have found helpful for maintaining and scaling feature flag systems.
+
+## Configuration Management Approaches
+
+As applications grow, managing feature flag configuration becomes increasingly important. Here are some approaches teams often consider:
+
+### Configuration Store Patterns
+
+When designing a configuration store, you might want to consider:
+
+- **Availability**: How to handle configuration service outages
+- **Consistency**: Ways to propagate changes across instances
+- **History**: Options for tracking changes and supporting rollbacks
+- **Auditing**: Methods for tracking configuration changes
+
+Here's an example of one way to implement a configuration manager:
+
+```typescript
+interface FeatureConfig {
+  name: string
+  description: string
+  owner: string
+  rules: RolloutRule[]
+  defaultValue: boolean
+  tags: string[]
+  createdAt: Date
+  updatedAt: Date
+  expiresAt?: Date
+}
+
+class FeatureManager {
+  private cache: Map<string, FeatureConfig>
+  private refreshIntervalMs: number
+  private configStore: ConfigurationStore
+
+  constructor(options: {
+    refreshInterval?: number
+    configStore: ConfigurationStore
+  }) {
+    this.cache = new Map()
+    this.refreshIntervalMs = options.refreshInterval ?? 30_000
+    this.configStore = options.configStore
+    this.startRefreshLoop()
+  }
+
+  private async startRefreshLoop() {
+    while (true) {
+      try {
+        await this.refreshCache()
+        await new Promise((resolve) =>
+          setTimeout(resolve, this.refreshIntervalMs),
+        )
+      } catch (error) {
+        console.error('Failed to refresh feature flags:', error)
+      }
+    }
+  }
+
+  private async refreshCache() {
+    const configs = await this.configStore.getAllConfigs()
+    for (const config of configs) {
+      this.cache.set(config.name, config)
+    }
+  }
+
+  async isEnabled(
+    feature: string,
+    context: EvaluationContext,
+  ): Promise<boolean> {
+    const config = this.cache.get(feature)
+    if (!config) {
+      throw new Error(`Feature ${feature} not found`)
+    }
+
+    return this.evaluate(config, context)
+  }
+}
+```
+
+### Caching Strategies
+
+One approach to optimizing performance is implementing multiple cache layers:
+
+```typescript
+class CachingFeatureManager extends FeatureManager {
+  private localCache: LRUCache<string, boolean>
+  private redis: Redis
+
+  constructor(options: FeatureManagerOptions) {
+    super(options)
+    this.localCache = new LRUCache({
+      max: 10000,
+      ttl: 1000 * 60 * 5, // 5 minutes
+    })
+    this.redis = new Redis(options.redisConfig)
+  }
+
+  async isEnabled(
+    feature: string,
+    context: EvaluationContext,
+  ): Promise<boolean> {
+    const cacheKey = this.getCacheKey(feature, context)
+
+    // Try local cache
+    const localResult = this.localCache.get(cacheKey)
+    if (localResult !== undefined) {
+      return localResult
+    }
+
+    // Try distributed cache
+    const redisResult = await this.redis.get(cacheKey)
+    if (redisResult !== null) {
+      const result = redisResult === 'true'
+      this.localCache.set(cacheKey, result)
+      return result
+    }
+
+    // Evaluate and cache
+    const result = await super.isEnabled(feature, context)
+    await this.redis.set(cacheKey, String(result), 'EX', 300)
+    this.localCache.set(cacheKey, result)
+    return result
+  }
+}
+```
+
+## Gradual Rollout Approaches
+
+Here's one way to implement gradual feature rollouts:
+
+```typescript
+class ProgressiveRollout {
+  private readonly seed: number
+
+  constructor(feature: string) {
+    // Using feature name as seed helps maintain consistency
+    this.seed = createHash('sha256').update(feature).digest().readUInt32BE(0)
+  }
+
+  shouldEnableForUser(
+    userId: string,
+    percentage: number,
+    options: {
+      stickiness?: 'user' | 'session' | 'random'
+      whitelist?: string[]
+      blacklist?: string[]
+    } = {},
+  ): boolean {
+    // Optional pre-checks
+    if (options.whitelist?.includes(userId)) return true
+    if (options.blacklist?.includes(userId)) return false
+
+    // Calculate hash based on chosen stickiness
+    const hash = this.calculateHash(userId, options.stickiness)
+
+    // Convert to percentage
+    const normalizedHash = (hash % 100) + 1
+
+    return normalizedHash <= percentage
+  }
+
+  private calculateHash(
+    userId: string,
+    stickiness: 'user' | 'session' | 'random' = 'user',
+  ): number {
+    switch (stickiness) {
+      case 'random':
+        return Math.floor(Math.random() * 100)
+      case 'session':
+        // Could use session ID here
+        return /* ... */
+      case 'user':
+      default:
+        return createHash('sha256')
+          .update(userId + this.seed)
+          .digest()
+          .readUInt32BE(0)
+    }
+  }
+}
+```
+
+## Monitoring and Analytics Options
+
+Here's one approach to tracking feature flag usage:
+
+```typescript
+class FeatureAnalytics {
+  private metrics: MetricsClient
+  private logger: Logger
+
+  constructor(options: { metrics: MetricsClient; logger: Logger }) {
+    this.metrics = options.metrics
+    this.logger = options.logger
+  }
+
+  async trackExposure(
+    feature: string,
+    context: EvaluationContext,
+    result: boolean,
+  ): Promise<void> {
+    // Record evaluation
+    this.metrics.increment('feature.evaluation', 1, {
+      feature,
+      result: String(result),
+      environment: context.environment,
+    })
+
+    // Log details
+    this.logger.info('Feature flag evaluated', {
+      feature,
+      context,
+      result,
+      timestamp: new Date().toISOString(),
+    })
+  }
+
+  async trackError(
+    feature: string,
+    error: Error,
+    context: EvaluationContext,
+  ): Promise<void> {
+    this.metrics.increment('feature.error', 1, {
+      feature,
+      error: error.name,
+      environment: context.environment,
+    })
+
+    this.logger.error('Feature flag error', {
+      feature,
+      error: error.message,
+      stack: error.stack,
+      context,
+    })
+  }
+
+  async trackLatency(
+    feature: string,
+    durationMs: number,
+    context: EvaluationContext,
+  ): Promise<void> {
+    this.metrics.histogram('feature.latency', durationMs, {
+      feature,
+      environment: context.environment,
+    })
+  }
+}
+```
+
+## Performance Optimization Patterns
+
+One way to reduce network calls is through batching:
+
+```typescript
+class BatchingFeatureManager extends FeatureManager {
+  private batchQueue: Map<string, Promise<boolean>>
+  private batchTimeout: NodeJS.Timeout | null = null
+  private readonly maxBatchSize = 50
+  private readonly batchWaitMs = 50
+
+  async isEnabled(
+    feature: string,
+    context: EvaluationContext,
+  ): Promise<boolean> {
+    const key = this.getBatchKey(feature, context)
+
+    if (!this.batchQueue) {
+      this.batchQueue = new Map()
+    }
+
+    // Check queue
+    const existing = this.batchQueue.get(key)
+    if (existing) return existing
+
+    // Queue new evaluation
+    const promise = new Promise<boolean>((resolve, reject) => {
+      this.queueEvaluation(feature, context, resolve, reject)
+    })
+
+    this.batchQueue.set(key, promise)
+    return promise
+  }
+
+  private queueEvaluation(
+    feature: string,
+    context: EvaluationContext,
+    resolve: (result: boolean) => void,
+    reject: (error: Error) => void,
+  ): void {
+    if (this.batchTimeout) {
+      clearTimeout(this.batchTimeout)
+    }
+
+    // Process immediately if queue is full
+    if (this.batchQueue.size >= this.maxBatchSize) {
+      this.processBatch()
+      return
+    }
+
+    // Wait for more items
+    this.batchTimeout = setTimeout(() => this.processBatch(), this.batchWaitMs)
+  }
+
+  private async processBatch(): Promise<void> {
+    const batch = new Map(this.batchQueue)
+    this.batchQueue.clear()
+
+    try {
+      const results = await this.evaluateBatch(batch)
+      for (const [key, result] of results) {
+        const promise = batch.get(key)
+        if (promise) {
+          promise.resolve(result)
+        }
+      }
+    } catch (error) {
+      for (const [, promise] of batch) {
+        promise.reject(error)
+      }
+    }
+  }
+}
+```
+
+## Error Handling Patterns
+
+Here's one approach to handling errors and providing fallbacks:
+
+```typescript
+class FeatureManagerWithFallback extends FeatureManager {
+  private readonly fallbackValues: Map<string, boolean>
+  private readonly analytics: FeatureAnalytics
+
+  constructor(options: {
+    fallbackValues: Map<string, boolean>
+    analytics: FeatureAnalytics
+  }) {
+    super(options)
+    this.fallbackValues = options.fallbackValues
+    this.analytics = options.analytics
+  }
+
+  async isEnabled(
+    feature: string,
+    context: EvaluationContext,
+  ): Promise<boolean> {
+    const startTime = Date.now()
+
+    try {
+      const result = await super.isEnabled(feature, context)
+
+      // Track metrics
+      await this.analytics.trackExposure(feature, context, result)
+      await this.analytics.trackLatency(
+        feature,
+        Date.now() - startTime,
+        context,
+      )
+
+      return result
+    } catch (error) {
+      // Track error
+      await this.analytics.trackError(feature, error, context)
+
+      // Try fallback
+      const fallback = this.fallbackValues.get(feature)
+      if (fallback !== undefined) {
+        return fallback
+      }
+
+      throw error
+    }
+  }
+}
+```
+
+## Helpful Patterns for Feature Management
+
+Here are some patterns teams have found useful:
+
+1. **Documentation Approaches**
+
+   ```typescript
+   interface FeatureMetadata {
+     name: string
+     description: string
+     owner: string
+     createdAt: Date
+     expiresAt?: Date
+     risks: {
+       level: 'low' | 'medium' | 'high'
+       description: string
+     }[]
+     dependencies: string[]
+     metrics: {
+       name: string
+       description: string
+       threshold?: number
+     }[]
+   }
+   ```
+
+2. **Health Monitoring**
+
+   ```typescript
+   class HealthCheck {
+     async checkFeatureFlags(): Promise<HealthStatus> {
+       const checks = await Promise.all([
+         this.checkConfigStore(),
+         this.checkCache(),
+         this.checkEvaluation(),
+       ])
+
+       return {
+         status: checks.every((c) => c.healthy) ? 'healthy' : 'degraded',
+         details: checks,
+       }
+     }
+   }
+   ```
+
+3. **Monitoring Setup**
+   ```typescript
+   const dashboard = {
+     panels: [
+       {
+         title: 'Feature Flag Evaluations',
+         metrics: ['feature.evaluation.count', 'feature.evaluation.latency'],
+       },
+       {
+         title: 'Error Rate',
+         metrics: ['feature.error.count', 'feature.error.rate'],
+         alerts: [
+           {
+             threshold: 0.1,
+             window: '5m',
+             action: 'notify-oncall',
+           },
+         ],
+       },
+     ],
+   }
+   ```
+
+## What's Next
+
+In this article, we've explored various approaches to implementing feature flags in larger applications. In [Part 3: Feature Flags in the Real World](/blog/feature-flags-in-real-world), we'll look at how these implementations work in practice, including business considerations and real-world challenges.
+
+> [!TIP]
+> As you move forward, you might want to consider:
+>
+> - Which configuration management approach fits your needs
+> - How you might handle gradual rollouts
+> - What kind of monitoring would be most valuable
+> - Which performance optimizations make sense for your case
+> - How to approach error handling in your context

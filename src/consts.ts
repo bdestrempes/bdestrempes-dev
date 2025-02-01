@@ -16,9 +16,9 @@ export const SITE: Site = {
   TITLE: 'Benjamin Destrempes',
   DESCRIPTION: 'Benjamin Destrempes is a software engineer and entrepreneur.',
   EMAIL: 'b.destrempes@gmail.com',
-  NUM_POSTS_ON_HOMEPAGE: 2,
-  POSTS_PER_PAGE: 3,
-  SITEURL: 'https://astro-erudite.vercel.app',
+  NUM_POSTS_ON_HOMEPAGE: 4,
+  POSTS_PER_PAGE: 8,
+  SITEURL: 'https://bdestrempes.dev',
 }
 
 export const NAV_LINKS: Link[] = [
