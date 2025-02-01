@@ -29,10 +29,10 @@ importers:
       '@astrojs/tailwind':
         specifier: ^5.1.4
         version: 5.1.5(astro@5.2.3(@types/node@22.13.0)(jiti@1.21.7)(rollup@4.34.0)(typescript@5.7.3)(yaml@2.7.0))(tailwindcss@3.4.17)
-      '@fontsource-variable/roboto-mono':
+      '@fontsource-variable/fira-code':
         specifier: ^5.1.1
         version: 5.1.1
-      '@fontsource/roboto':
+      '@fontsource/fira-sans':
         specifier: ^5.1.1
         version: 5.1.1
       '@hbsnow/rehype-sectionize':
@@ -552,11 +552,11 @@ packages:
   '@floating-ui/utils@0.2.9':
     resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
 
-  '@fontsource-variable/roboto-mono@5.1.1':
-    resolution: {integrity: sha512-5oZ4r3khknJVqooNtgi8QKRROJtbFhSptnpqBfbST0VGP1iIOcfmU1FIxoQFpCDjwPpx6oHQcTBF02JuI9094A==}
+  '@fontsource-variable/fira-code@5.1.1':
+    resolution: {integrity: sha512-+X0eaJHfG/igcrVS2jvYCymFUFtcChUpk3obRXLt8ZPYIE+sfZqhtidCEaCgkCQxR6zJbYmvMd6M+rjrya6KyQ==}
 
-  '@fontsource/roboto@5.1.1':
-    resolution: {integrity: sha512-XwVVXtERDQIM7HPUIbyDe0FP4SRovpjF7zMI8M7pbqFp3ahLJsJTd18h+E6pkar6UbV3btbwkKjYARr5M+SQow==}
+  '@fontsource/fira-sans@5.1.1':
+    resolution: {integrity: sha512-LdbPwcMEADFjbcMx5sdPcyLi0NnEzP34YO+4d2eOeIKjCu1SyJiG/bBz5K07qm4pyhh2cQveifhFrG7gQDG9wQ==}
 
   '@hbsnow/rehype-sectionize@1.0.7':
     resolution: {integrity: sha512-twbVxCFf4YwgTm6FIdGtHfJ14vvIHedk2fqZTpE3X6+vszEeZlMTy7tOyI9KaP/6S2DN2Jnk7zZGtZANTD+vEg==}
@@ -4665,9 +4665,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.9': {}
 
-  '@fontsource-variable/roboto-mono@5.1.1': {}
+  '@fontsource-variable/fira-code@5.1.1': {}
 
-  '@fontsource/roboto@5.1.1': {}
+  '@fontsource/fira-sans@5.1.1': {}
 
   '@hbsnow/rehype-sectionize@1.0.7':
     dependencies:
