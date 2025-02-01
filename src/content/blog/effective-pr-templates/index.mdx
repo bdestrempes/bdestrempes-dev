@@ -28,24 +28,31 @@ GitHub offers several ways to add PR templates to your repository. Here's the mo
 
 ```markdown title=".github/pull_request_template.md"
 ## Description
+
 <!-- Provide a clear and concise description of your changes -->
 
 ## Problem
+
 <!-- What problem does this PR solve? Link to related issues if applicable -->
 
 ## Solution
+
 <!-- How did you solve the problem? -->
 
 ## Testing
+
 <!-- Describe the testing you've done -->
+
 - [ ] Unit tests added/updated
 - [ ] Manual testing completed
 - [ ] Integration tests if applicable
 
 ## Screenshots
+
 <!-- If applicable, add screenshots to help explain your changes -->
 
 ## Additional Notes
+
 <!-- Any additional information that reviewers should know? -->
 ```
 
@@ -60,6 +67,7 @@ The description should be clear and concise:
 
 ```markdown
 ## Description
+
 - What: Added dark mode support to the blog
 - Why: Improve user experience in low-light conditions
 - How: Implemented using Tailwind's dark mode utilities
@@ -71,6 +79,7 @@ Always provide context:
 
 ```markdown
 ## Problem
+
 The current authentication flow doesn't handle expired tokens,
 causing users to be unexpectedly logged out.
 
@@ -83,6 +92,7 @@ A comprehensive testing section ensures quality:
 
 ```markdown
 ## Testing
+
 - [x] Tested in Chrome, Firefox, and Safari
 - [x] Verified mobile responsiveness
 - [x] Added unit tests for token refresh logic
@@ -92,12 +102,15 @@ A comprehensive testing section ensures quality:
 ## Best Practices
 
 1. **Keep It Focused**
+
    > [!IMPORTANT]
    > Each PR should address a single concern. If you find yourself writing a long description covering multiple changes, consider splitting the PR.
 
 2. **Use Checklists**
+
    ```markdown
    ## Pre-merge Checklist
+
    - [ ] Code follows project style guidelines
    - [ ] Documentation updated
    - [ ] Tests added/updated
@@ -105,12 +118,16 @@ A comprehensive testing section ensures quality:
    ```
 
 3. **Include Visual Context**
+
    ```markdown
    ## Visual Changes
+
    ### Before
+
    ![Before screenshot]()
-   
+
    ### After
+
    ![After screenshot]()
    ```
 
@@ -124,9 +141,11 @@ You can use HTML comments to provide guidance that won't appear in the final PR:
 <!-- Delete sections that are not applicable -->
 
 ## API Changes
+
 <!-- If you've modified the API, describe the changes here -->
 
 ## Database Changes
+
 <!-- For PRs that include database schema changes -->
 ```
 
@@ -148,11 +167,13 @@ For larger projects, you might want different templates for different types of c
 ## Implementation Steps
 
 1. Create the template directory:
+
    ```bash
    mkdir -p .github/
    ```
 
 2. Add your template file:
+
    ```bash
    touch .github/pull_request_template.md
    ```
@@ -168,4 +189,4 @@ For larger projects, you might want different templates for different types of c
 
 An effective PR template is a living document that should evolve with your team's needs. Start with the basics and iterate based on feedback. Remember, the goal is to improve communication and code quality, not to create bureaucracy.
 
-The best templates strike a balance between structure and flexibility, providing enough guidance to ensure consistency while not being overly prescriptive. Regular reviews and updates of your template based on team feedback will help maintain its effectiveness over time. 
+The best templates strike a balance between structure and flexibility, providing enough guidance to ensure consistency while not being overly prescriptive. Regular reviews and updates of your template based on team feedback will help maintain its effectiveness over time.

@@ -25,7 +25,7 @@ Here's a simple example of an Astro component:
 
 ```astro title="src/components/Greeting.astro"
 ---
-const { name = "Reader" } = Astro.props;
+const { name = 'Reader' } = Astro.props
 ---
 
 <div class="greeting">
@@ -34,7 +34,7 @@ const { name = "Reader" } = Astro.props;
 
 <style>
   .greeting {
-    @apply p-4 bg-accent text-accent-foreground rounded-lg;
+    @apply rounded-lg bg-accent p-4 text-accent-foreground;
   }
 </style>
 ```
@@ -46,6 +46,7 @@ The visual layer of the blog is built with two powerful tools:
 ### Tailwind CSS
 
 [Tailwind CSS](https://tailwindcss.com) serves as our utility-first CSS framework, providing:
+
 - Rapid UI development with utility classes
 - Built-in dark mode support
 - Highly customizable design tokens
@@ -73,6 +74,7 @@ export default {
 ### shadcn/ui
 
 The template incorporates [shadcn/ui](https://ui.shadcn.com/) components, which are:
+
 - Built on top of Radix UI primitives
 - Fully accessible
 - Beautifully designed
@@ -106,7 +108,7 @@ Content handling is managed through several specialized packages:
 > [!IMPORTANT]
 > All content is written in MDX, which allows us to use React components directly in our markdown files. This very article is written in MDX!
 
-- **MDX Processing**: 
+- **MDX Processing**:
   - `rehype-pretty-code` for beautiful code blocks
   - `rehype-katex` for mathematical equations
   - `remark-emoji` for emoji support
@@ -118,21 +120,20 @@ Here's how we configure MDX in our Astro config:
 export default defineConfig({
   integrations: [
     mdx({
-      remarkPlugins: [
-        remarkEmoji,
-        [remarkToc, { tight: true }],
-        remarkMath,
-      ],
+      remarkPlugins: [remarkEmoji, [remarkToc, { tight: true }], remarkMath],
       rehypePlugins: [
         rehypeKatex,
-        [rehypePrettyCode, {
-          theme: 'github-dark',
-          onVisitLine(node) {
-            if (node.children.length === 0) {
-              node.children = [{ type: 'text', value: ' ' }]
-            }
+        [
+          rehypePrettyCode,
+          {
+            theme: 'github-dark',
+            onVisitLine(node) {
+              if (node.children.length === 0) {
+                node.children = [{ type: 'text', value: ' ' }]
+              }
+            },
           },
-        }],
+        ],
       ],
     }),
   ],
@@ -196,4 +197,4 @@ One of the key strengths of this stack is its focus on performance:
 
 This tech stack represents a carefully chosen combination of modern web technologies, each serving a specific purpose while working together harmoniously. The result is a fast, accessible, and developer-friendly blog template that's ready for production use.
 
-The beauty of this stack lies not just in the individual technologies, but in how they've been integrated to create a cohesive whole. Whether you're a developer looking to understand the architecture or a content creator wanting to know what powers your blog, this stack provides a solid foundation for modern web content delivery. 
+The beauty of this stack lies not just in the individual technologies, but in how they've been integrated to create a cohesive whole. Whether you're a developer looking to understand the architecture or a content creator wanting to know what powers your blog, this stack provides a solid foundation for modern web content delivery.
