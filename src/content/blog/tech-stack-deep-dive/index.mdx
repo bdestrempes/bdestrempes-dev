@@ -1,0 +1,199 @@
+---
+title: 'A Deep Dive into the Tech Stack'
+description: 'Exploring the powerful technologies that power this modern blog template'
+date: 2025-02-01
+tags: ['tech-stack', 'web-development', 'astro', 'react']
+draft: false
+---
+
+# A Deep Dive into the Tech Stack
+
+Building a modern, performant blog requires careful consideration of the technology choices. Let's explore the key components that make this blog template work seamlessly together.
+
+> [!NOTE]
+> This article explores the technical architecture of this blog template. If you're interested in why these specific technologies were chosen, check out [The State of Static Blogs](/blog/the-state-of-static-blogs).
+
+## Core Framework: Astro
+
+At the heart of this blog template lies [Astro](https://astro.build/), a modern static site generator that brings several advantages:
+
+- **Islands Architecture**: Astro's unique approach to partial hydration means we only ship JavaScript where it's needed, resulting in blazing-fast page loads.
+- **Built-in MDX Support**: Through `@astrojs/mdx`, we get first-class support for MDX content, allowing us to mix React components with Markdown.
+- **View Transitions**: The template leverages Astro's built-in view transitions for smooth, app-like navigation between pages.
+
+Here's a simple example of an Astro component:
+
+```astro title="src/components/Greeting.astro"
+---
+const { name = "Reader" } = Astro.props;
+---
+
+<div class="greeting">
+  <h2>Hello, {name}!</h2>
+</div>
+
+<style>
+  .greeting {
+    @apply p-4 bg-accent text-accent-foreground rounded-lg;
+  }
+</style>
+```
+
+## Styling and Components
+
+The visual layer of the blog is built with two powerful tools:
+
+### Tailwind CSS
+
+[Tailwind CSS](https://tailwindcss.com) serves as our utility-first CSS framework, providing:
+- Rapid UI development with utility classes
+- Built-in dark mode support
+- Highly customizable design tokens
+- Excellent typography through `@tailwindcss/typography`
+
+> [!TIP]
+> The template uses Tailwind's dark mode feature extensively. Try toggling dark mode using the theme switcher in the navigation bar!
+
+Here's how we configure Tailwind with our custom theme:
+
+```typescript title="tailwind.config.ts" {3-8}
+export default {
+  darkMode: ['class'],
+  theme: {
+    container: {
+      center: true,
+      padding: '2rem',
+      screens: { '2xl': '1400px' },
+    },
+  },
+  plugins: [require('@tailwindcss/typography'), require('tailwindcss-animate')],
+}
+```
+
+### shadcn/ui
+
+The template incorporates [shadcn/ui](https://ui.shadcn.com/) components, which are:
+- Built on top of Radix UI primitives
+- Fully accessible
+- Beautifully designed
+- Easily customizable
+
+Here's an example of a shadcn/ui component in use:
+
+```tsx title="src/components/ui/ThemeToggle.tsx"
+import { Moon, Sun } from 'lucide-react'
+import { Button } from './button'
+
+export function ThemeToggle() {
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => document.documentElement.classList.toggle('dark')}
+    >
+      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <span className="sr-only">Toggle theme</span>
+    </Button>
+  )
+}
+```
+
+## Content Management
+
+Content handling is managed through several specialized packages:
+
+> [!IMPORTANT]
+> All content is written in MDX, which allows us to use React components directly in our markdown files. This very article is written in MDX!
+
+- **MDX Processing**: 
+  - `rehype-pretty-code` for beautiful code blocks
+  - `rehype-katex` for mathematical equations
+  - `remark-emoji` for emoji support
+  - `remark-toc` for automatic table of contents generation
+
+Here's how we configure MDX in our Astro config:
+
+```typescript title="astro.config.ts" {4-15}
+export default defineConfig({
+  integrations: [
+    mdx({
+      remarkPlugins: [
+        remarkEmoji,
+        [remarkToc, { tight: true }],
+        remarkMath,
+      ],
+      rehypePlugins: [
+        rehypeKatex,
+        [rehypePrettyCode, {
+          theme: 'github-dark',
+          onVisitLine(node) {
+            if (node.children.length === 0) {
+              node.children = [{ type: 'text', value: ' ' }]
+            }
+          },
+        }],
+      ],
+    }),
+  ],
+})
+```
+
+## Developer Experience
+
+The development experience is enhanced with:
+
+- **TypeScript**: Full type safety across the codebase
+- **Prettier**: Consistent code formatting with specialized plugins for Astro and Tailwind
+- **React Integration**: Through `@astrojs/react` for interactive components when needed
+
+> [!WARNING]
+> While React components can be used anywhere in the blog, they should be used sparingly to maintain optimal performance. Astro's static HTML output should be preferred when interactivity isn't required.
+
+## Additional Features
+
+The template includes several quality-of-life features:
+
+- **RSS Feed**: Built-in RSS support via `@astrojs/rss`
+- **Sitemap Generation**: Automatic sitemap creation with `@astrojs/sitemap`
+- **Icon Support**: Comprehensive icon system using `astro-icon` and various icon sets
+
+Here's how we generate the RSS feed:
+
+```typescript title="src/pages/rss.xml.ts"
+import rss from '@astrojs/rss'
+import { getCollection } from 'astro:content'
+import { SITE } from '../consts'
+
+export async function GET(context) {
+  const posts = await getCollection('blog')
+  return rss({
+    title: SITE.TITLE,
+    description: SITE.DESCRIPTION,
+    site: context.site,
+    items: posts.map((post) => ({
+      title: post.data.title,
+      pubDate: post.data.date,
+      description: post.data.description,
+      link: `/blog/${post.slug}/`,
+    })),
+  })
+}
+```
+
+## Performance Considerations
+
+One of the key strengths of this stack is its focus on performance:
+
+1. **Minimal JavaScript**: Thanks to Astro's Islands architecture, JavaScript is only shipped where absolutely necessary
+2. **Static Generation**: Pages are pre-rendered at build time for optimal performance
+3. **Asset Optimization**: Images and other assets are automatically optimized during the build process
+
+> [!SUCCESS]
+> This template consistently achieves perfect Lighthouse scores across all metrics: Performance, Accessibility, Best Practices, and SEO!
+
+## Conclusion
+
+This tech stack represents a carefully chosen combination of modern web technologies, each serving a specific purpose while working together harmoniously. The result is a fast, accessible, and developer-friendly blog template that's ready for production use.
+
+The beauty of this stack lies not just in the individual technologies, but in how they've been integrated to create a cohesive whole. Whether you're a developer looking to understand the architecture or a content creator wanting to know what powers your blog, this stack provides a solid foundation for modern web content delivery. 

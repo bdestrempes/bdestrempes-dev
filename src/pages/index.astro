@@ -2,6 +2,7 @@
 import BlogCard from '@/components/BlogCard.astro'
 import Container from '@/components/Container.astro'
 import Link from '@/components/Link.astro'
+import 'rehype-callouts/theme/github'
 import { buttonVariants } from '@/components/ui/button'
 import {
   Card,
@@ -25,49 +26,22 @@ const blog = (await getCollection('blog'))
     <section>
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl">er·u·dite</CardTitle>
+          <CardTitle className="text-3xl">Hey, I'm Ben</CardTitle>
           <CardDescription
-            >/ˈer(y)əˌdīt/ &bull; <span class="font-semibold">adjective</span
+            >Senior Developer @ <span class="font-semibold"><Link href="https://shopify.com" external underline>Shopify</Link></span
             ></CardDescription
           >
         </CardHeader>
         <CardContent>
           <p class="mb-2 text-sm text-muted-foreground">
-            astro-erudite is an opinionated, no-frills static blogging template
-            built with <Link
-              href="https://astro.build"
-              class="text-foreground"
-              external
-              underline>Astro</Link
-            >, <Link
-              href="https://tailwindcss.com"
-              class="text-foreground"
-              external
-              underline>Tailwind</Link
-            >, and <Link
-              href="https://ui.shadcn.com"
-              class="text-foreground"
-              external
-              underline>shadcn/ui</Link
-            >. Extraordinarily loosely based on the <Link
-              href="https://astro-micro.vercel.app/"
-              class="text-foreground"
-              external
-              underline>Astro Micro</Link
-            > theme.
+            👨‍💻 I'm a senior frontend developer based in Saguenay, Quebec. With a strong background in web development, I specialize in building modern, performant web applications. Currently, I'm focused on e-commerce solutions at <Link href="https://shopify.com" external underline>Shopify</Link>, where I work on creating exceptional developer and merchant experiences.
           </p>
           <p class="text-sm text-muted-foreground">
-            To use this template, check out the <Link
-              href="https://github.com/jktrn/astro-erudite"
+            🏔️ When I'm not coding, you can find me skiing or mountain biking all around the world. 🚀 I'm passionate about modern web frameworks, developer tooling, and creating content to share knowledge with the developer community. Check out my <Link
+              href="/blog"
               class="text-foreground"
-              underline
-              external>GitHub</Link
-            > repository. To learn more about why this template exists, read this
-            blog post: <Link
-              href="/blog/the-state-of-static-blogs"
-              class="text-foreground"
-              underline>The State of Static Blogs in 2024</Link
-            >.
+              underline>blog</Link
+            > for technical insights and development tips!
           </p>
         </CardContent>
       </Card>

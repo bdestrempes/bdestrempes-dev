@@ -13,8 +13,10 @@ import rehypeKatex from 'rehype-katex'
 import rehypeExternalLinks from 'rehype-external-links'
 import rehypePrettyCode from 'rehype-pretty-code'
 import remarkEmoji from 'remark-emoji'
+import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import remarkToc from 'remark-toc'
+import rehypeCallouts from 'rehype-callouts'
 import sectionize from '@hbsnow/rehype-sectionize'
 
 import icon from 'astro-icon'
@@ -41,6 +43,7 @@ export default defineConfig({
           rel: ['nofollow', 'noreferrer', 'noopener'],
         },
       ],
+      rehypeCallouts,
       rehypeHeadingIds,
       rehypeKatex,
       sectionize,
@@ -62,7 +65,7 @@ export default defineConfig({
         },
       ],
     ],
-    remarkPlugins: [remarkToc, remarkMath, remarkEmoji],
+    remarkPlugins: [remarkToc, remarkMath, remarkEmoji, remarkGfm],
   },
   server: {
     port: 1234,
