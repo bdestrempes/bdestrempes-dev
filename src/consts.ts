@@ -30,6 +30,9 @@ export const SOCIAL_LINKS: Link[] = [
   { href: 'https://github.com/bdestrempes', label: 'GitHub' },
   { href: 'https://twitter.com/bdestrempes', label: 'Twitter' },
   { href: 'b.destrempes@gmail.com', label: 'Email' },
-  { href: 'https://www.linkedin.com/in/bdestrempes/', label: 'LinkedIn' },
+  {
+    href: 'https://www.linkedin.com/in/benjamin-destrempes/',
+    label: 'LinkedIn',
+  },
   { href: '/rss.xml', label: 'RSS' },
 ]
