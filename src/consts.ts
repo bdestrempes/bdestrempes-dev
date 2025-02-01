@@ -14,7 +14,7 @@ export type Link = {
 
 export const SITE: Site = {
   TITLE: 'Benjamin Destrempes',
-  DESCRIPTION: 'Benjamin Destrempes is a software engineer and entrepreneur.',
+  DESCRIPTION: "Benjamin Destrempes' technical blog.",
   EMAIL: 'b.destrempes@gmail.com',
   NUM_POSTS_ON_HOMEPAGE: 4,
   POSTS_PER_PAGE: 8,
