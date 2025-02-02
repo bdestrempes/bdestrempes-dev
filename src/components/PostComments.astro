@@ -1,0 +1,63 @@
+---
+
+---
+
+<section class="giscus mx-auto mt-10 w-full"></section>
+
+<script>
+  function loadGiscus() {
+    const script = document.createElement('script')
+    script.src = 'https://giscus.app/client.js'
+    script.setAttribute('data-repo', 'bdestrempes/bdestrempes-dev')
+    script.setAttribute('data-repo-id', 'R_kgDONy3sNA')
+    script.setAttribute('data-category', 'Blog Posts Comments')
+    script.setAttribute('data-category-id', 'DIC_kwDONy3sNM4CmkDu')
+    script.setAttribute('data-mapping', 'url')
+    script.setAttribute('data-strict', '0')
+    script.setAttribute('data-reactions-enabled', '1')
+    script.setAttribute('data-emit-metadata', '0')
+    script.setAttribute('data-input-position', 'bottom')
+    script.setAttribute('data-lang', 'en')
+    script.setAttribute('data-loading', 'lazy')
+    script.setAttribute('crossorigin', 'anonymous')
+
+    // Set initial theme based on current color scheme
+    const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+    script.setAttribute('data-theme', theme)
+
+    const giscusContainer = document.querySelector('.giscus')
+    if (giscusContainer) {
+      giscusContainer.appendChild(script)
+    }
+  }
+
+  function updateGiscusTheme() {
+    const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+    const iframe = document.querySelector('iframe.giscus-frame') as HTMLIFrameElement
+    if (iframe?.contentWindow) {
+      iframe.contentWindow.postMessage({ giscus: { setConfig: { theme } } }, 'https://giscus.app')
+    }
+  }
+
+  // Initial load
+  document.addEventListener('astro:page-load', loadGiscus)
+
+  // Watch for theme changes
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'class' && mutation.target === document.documentElement) {
+        updateGiscusTheme()
+      }
+    })
+  })
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class'],
+  })
+
+  // Cleanup on page unload
+  document.addEventListener('astro:before-preparation', () => {
+    observer.disconnect()
+  })
+</script>
