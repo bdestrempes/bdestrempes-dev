@@ -11,7 +11,7 @@ draft: true
 Building a modern, performant blog requires careful consideration of the technology choices. Let's explore the key components that make this blog template work seamlessly together.
 
 > [!NOTE]
-> This article explores the technical architecture of this blog template. If you're interested in why these specific technologies were chosen, check out [The State of Static Blogs](/blog/the-state-of-static-blogs).
+> This article explores the technical architecture of this blog template. If you're interested in why these specific technologies were chosen, check out [The State of Static Blogs](/articles/the-state-of-static-blogs).
 
 ## Core Framework: Astro
 
@@ -176,7 +176,7 @@ export async function GET(context) {
       title: post.data.title,
       pubDate: post.data.date,
       description: post.data.description,
-      link: `/blog/${post.slug}/`,
+      link: `/articles/${post.slug}/`,
     })),
   })
 }
