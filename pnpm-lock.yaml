@@ -137,6 +137,9 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.17)
+      tm-themes:
+        specifier: ^1.9.10
+        version: 1.9.10
       typescript:
         specifier: ^5.7.2
         version: 5.7.3
@@ -4055,6 +4058,9 @@ packages:
 
   tinyexec@0.3.2:
     resolution: {integrity: sha512-KQQR9yN7R5+OSwaK0XQoj22pwHoTlgYqmUscPYoknOoWCWfj/5/ABTMRi69FrKU5ffPVh5QcFikpWJI/P1ocHA==}
+
+  tm-themes@1.9.10:
+    resolution: {integrity: sha512-NP4OGhlNbAqeV9lRRPBOuTUp1Ckz0R3IBD20SSM4I2ugzpL2/bqVzrPDhXFbgvKKv0xsjAm99gsIBh+f8gAlqg==}
 
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
@@ -9464,6 +9470,8 @@ snapshots:
       any-promise: 1.3.0
 
   tinyexec@0.3.2: {}
+
+  tm-themes@1.9.10: {}
 
   to-regex-range@5.0.1:
     dependencies:

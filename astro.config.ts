@@ -52,7 +52,11 @@ export default defineConfig({
         {
           theme: {
             light: 'github-light-high-contrast',
-            dark: 'github-dark-high-contrast',
+            dark: 'catppuccin-mocha',
+          },
+          defaultLang: {
+            block: 'typescript',
+            inline: 'typescript',
           },
           transformers: [
             transformerNotationDiff(),

@@ -26,7 +26,7 @@ In this guide, you'll learn:
 
 ---
 
-Most development teams start with simple `true`/`false` toggles, usually with the confident declaration "We'll keep it simple!" (they definitely did not keep it simple). Take this basic example from an e-commerce application:
+Most development teams start their feature flag journey with simple `true`/`false` toggles, usually with the confident declaration "We'll keep it simple!" (they definitely did not keep it simple). Take this basic example from an e-commerce application:
 
 ```typescript
 if (flags.isEnabled('new-checkout')) {
@@ -87,7 +87,7 @@ Common characteristics:
 
 Consider this example of feature flag configuration:
 
-```json
+```json showLineNumbers
 {
   "flags": {
     "new-checkout": {
@@ -103,7 +103,7 @@ Consider this example of feature flag configuration:
 
 The corresponding application code remains focused on the feature itself:
 
-```typescript
+```typescript showLineNumbers
 if (featureFlags.isEnabled('new-checkout')) {
   return <NewCheckoutFlow />;
 } else {
@@ -124,7 +124,7 @@ Common characteristics:
 - **Focus**: Frequently tied to compliance requirements
 - **Purpose**: Controls user permissions
 
-```typescript
+```typescript showLineNumbers
 // Example of role-based permissions
 interface Role {
   name: string
@@ -157,7 +157,7 @@ Common characteristics:
 
 Here's how entitlements might be configured:
 
-```json
+```json showLineNumbers
 {
   "features": {
     "advanced-analytics": {
@@ -174,7 +174,7 @@ Here's how entitlements might be configured:
 
 And how they're checked in the application code:
 
-```typescript
+```typescript showLineNumbers
 if (await entitlements.can(user, 'advanced-analytics')) {
   return <AdvancedAnalytics />;
 } else {
@@ -203,7 +203,7 @@ Here's how these different controls often compare:
 
 A typical approach to combining these systems might look like this:
 
-```typescript
+```typescript showLineNumbers
 // Example of combining different controls
 async function canAccessFeature(
   user: User,
@@ -242,7 +242,7 @@ While best practices suggest keeping feature flags temporary and minimal, real-w
 
 Let me share a typical story of how feature flag complexity grows over time (one that definitely isn't based on personal experience... 😅):
 
-```typescript
+```typescript showLineNumbers
 // Initial implementation
 if (featureFlags.isEnabled('new-checkout-flow')) {
   return <NewCheckout />;
@@ -312,7 +312,7 @@ Teams sometimes blur the lines between feature flags, permissions, and entitleme
 
 Here's how this anti-pattern often appears:
 
-```typescript
+```typescript showLineNumbers
 // ❌ Anti-pattern: Mixed concerns
 if (
   featureFlags.isEnabled('admin-dashboard') &&
@@ -372,7 +372,7 @@ While separating feature flags from permissions and entitlements appears clean, 
 
 For example, imagine implementing a "Teams" feature in a SaaS application:
 
-```typescript
+```typescript showLineNumbers
 // ❌ Purely separated concerns at the component level...
 async function TeamsFeature() {
   // We can at least run the checks concurrently
@@ -430,7 +430,7 @@ This example shows different approaches to managing multiple concerns. While put
 
 The suggested performance optimizations come with their own tradeoffs. For example:
 
-```typescript
+```typescript showLineNumbers
 class FeatureProvider {
   private cache = new Map<string, CacheEntry>()
 
@@ -451,7 +451,7 @@ class FeatureProvider {
     }
   }
 
-  // A more nuanced approach might be better
+  // A slightly more nuanced approach might be better
   async getFeaturesByComponent(
     component: string,
     context: Context,
