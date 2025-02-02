@@ -59,13 +59,13 @@ The decision between these approaches extends beyond feature comparison—it's a
 
 Feature flags have evolved from simple deployment tools into essential infrastructure for modern software development. They enable teams to:
 
-1. **Deploy Continuously**: Ship code independently of feature releases
-2. **Release Gradually**: Roll out features to specific user segments
-3. **Mitigate Risk**: Quickly disable problematic features
-4. **Test in Production**: Run experiments with real users
-5. **Target Precisely**: Customize experiences for different users
-6. **Configure Dynamically**: Adjust system behavior without deployments
-7. **Support Enterprise**: Manage customer-specific feature sets
+1. **Deploy continuously**: Ship code independently of feature releases
+2. **Release gradually**: Roll out features to specific user segments
+3. **Mitigate risk**: Quickly disable problematic features
+4. **Test in production**: Run experiments with real users
+5. **Target precisely**: Customize experiences for different users
+6. **Configure dynamically**: Adjust system behavior without deployments
+7. **Support enterprise customers**: Manage customer-specific feature sets
 
 > [!NOTE]
 > Modern applications often require a combination of feature flags, access controls, and entitlements. Understanding how these systems complement each other is crucial for building robust applications.
@@ -111,7 +111,7 @@ if (featureFlags.isEnabled('new-checkout')) {
 }
 ```
 
-The feature flag service evaluates which users see the feature based on the configuration.
+The `featureFlags` service evaluates which users see the feature based on the configuration.
 
 ### 2. Role-Based Access Control (RBAC)
 
@@ -129,7 +129,7 @@ Common characteristics:
 interface Role {
   name: string
   permissions: string[]
-  inheritsFrom?: Role[]
+  inheritsFrom?: Role[] // Simplified inheritance example
 }
 
 const adminRole: Role = {
@@ -182,7 +182,7 @@ if (await entitlements.can(user, 'advanced-analytics')) {
 }
 ```
 
-The entitlements service handles checking the user's subscription tier, usage limits, and any other business rules.
+The `entitlements` service handles checking the user's subscription tier, usage limits, and any other business rules.
 
 ### Comparison of Approaches
 
@@ -268,11 +268,11 @@ if (featureFlags.isEnabled('new-checkout-flow')) {
 
 Over time, this accumulation of flags can lead to several challenges:
 
-- **Legacy Flags**: Flags intended to be temporary that persist in the codebase
-- **Testing Complexity**: Multiple flag combinations increase testing requirements
-- **Maintenance Burden**: Each flag increases system complexity
-- **Documentation Drift**: Configuration and documentation can become outdated
-- **Partial Deployments**: Features may remain in transition states
+- **Legacy flags**: Flags intended to be temporary that persist in the codebase
+- **Testing complexity**: Multiple flag combinations increase testing requirements
+- **Maintenance burden**: Each flag increases system complexity
+- **Documentation drift**: Configuration and documentation can become outdated
+- **Partial deployments**: Features may remain in transition states
 
 > [!NOTE]
 > Consider implementing systematic solutions:
@@ -295,13 +295,13 @@ For example, imagine a dashboard page that loads several widgets, each needing t
 
 Fortunately, there are several proven strategies to maintain good performance:
 
-- **Centralize Flag Fetching**: Avoid having individual components fetch their own flags scattered throughout the codebase. Instead, organize flag fetching at higher levels in your application (like the route or page level) and pass the values down to child components. This not only improves performance but also makes flag usage more maintainable and easier to track.
+- **Centralize flag fetching**: Avoid having individual components fetch their own flags scattered throughout the codebase. Instead, organize flag fetching at higher levels in your application (like the route or page level) and pass the values down to child components. This not only improves performance but also makes flag usage more maintainable and easier to track.
 
-- **Batch Evaluations**: Instead of checking flags individually, fetch all needed flags for a page or component at once. This reduces network overhead and improves response times.
+- **Batch evaluations**: Instead of checking flags individually, fetch all needed flags for a page or component at once. This reduces network overhead and improves response times.
 
-- **Smart Caching**: Cache flag values at appropriate levels (session, page load, etc.) to avoid unnecessary network calls. Consider cache invalidation strategies that balance freshness with performance.
+- **Smart caching**: Cache flag values at appropriate levels (session, page load, etc.) to avoid unnecessary network calls. Consider cache invalidation strategies that balance freshness with performance.
 
-- **Performance Monitoring**: Track flag evaluation latency and implement circuit breakers or fallbacks for when the feature flag service is slow or unavailable.
+- **Performance monitoring**: Track flag evaluation latency and implement circuit breakers or fallbacks for when the feature flag service is slow or unavailable.
 
 > [!TIP]
 > Consider implementing a client-side SDK that handles batching, caching, and fallback strategies automatically. Many feature flag platforms provide these capabilities out of the box.
