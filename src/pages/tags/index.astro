@@ -1,10 +1,8 @@
 ---
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import Container from '@/components/Container.astro'
-import Link from '@/components/Link.astro'
-import { badgeVariants } from '@/components/ui/badge'
+import Tag from '@/components/Tag.astro'
 import Layout from '@/layouts/Layout.astro'
-import { Icon } from 'astro-icon/components'
 import { getCollection } from 'astro:content'
 
 const articles = (await getCollection('articles')).filter(
@@ -32,16 +30,11 @@ const tags = [...tagCounts.keys()].sort((a, b) => {
       <div class="flex flex-wrap gap-2">
         {
           tags.map((tag) => (
-            <Link
-              href={`/tags/${tag}`}
-              class={badgeVariants({ variant: 'secondary' })}
-            >
-              <Icon name="lucide:hash" class="size-3 -translate-x-0.5" />
-              {tag}
+            <Tag name={tag}>
               <span class="ml-1.5 text-muted-foreground">
                 ({tagCounts.get(tag)})
               </span>
-            </Link>
+            </Tag>
           ))
         }
       </div>

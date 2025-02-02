@@ -1,6 +1,6 @@
 ---
+import Tag from '@/components/Tag.astro'
 import AvatarComponent from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { parseAuthors } from '@/lib/server-utils'
 import { formatDate, readingTime } from '@/lib/utils'
@@ -78,7 +78,7 @@ const authors = await parseAuthors(entry.data.authors ?? [])
         entry.data.tags && (
           <div class="flex flex-wrap gap-2">
             {entry.data.tags.map((tag) => (
-              <Badge variant="secondary">{tag}</Badge>
+              <Tag name={tag} />
             ))}
           </div>
         )
