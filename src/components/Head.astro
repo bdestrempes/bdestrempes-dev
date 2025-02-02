@@ -1,4 +1,5 @@
 ---
+import '../styles/github-callout.css'
 import '../styles/global.css'
 import '../styles/katex.css'
 
@@ -22,10 +23,6 @@ const { title, description, image = '/static/twitter-card.png' } = Astro.props
 
 <link rel="canonical" href={canonicalURL} />
 <link rel="sitemap" href="/sitemap-index.xml" />
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/rehype-callouts/dist/themes/github/index.css"
-/>
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
