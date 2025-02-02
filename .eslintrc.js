@@ -2,7 +2,11 @@ module.exports = {
   extends: [
     'plugin:astro/recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:mdx/recommended',
   ],
+  settings: {
+    'mdx/code-blocks': true,
+  },
   overrides: [
     {
       files: ['*.astro'],

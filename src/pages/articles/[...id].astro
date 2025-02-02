@@ -3,7 +3,7 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import Link from '@/components/Link.astro'
 import PostNavigation from '@/components/PostNavigation.astro'
 import TableOfContents from '@/components/TableOfContents.astro'
-import { badgeVariants } from '@/components/ui/badge'
+import Tag from '@/components/Tag.astro'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import Layout from '@/layouts/Layout.astro'
@@ -14,7 +14,7 @@ import { Image } from 'astro:assets'
 import { type CollectionEntry, getCollection, render } from 'astro:content'
 
 export async function getStaticPaths() {
-  const posts = (await getCollection('blog'))
+  const posts = (await getCollection('articles'))
     .filter((post) => !post.data.draft)
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   return posts.map((post) => ({
@@ -22,9 +22,9 @@ export async function getStaticPaths() {
     props: post,
   }))
 }
-type Props = CollectionEntry<'blog'>
+type Props = CollectionEntry<'articles'>
 
-const posts = (await getCollection('blog'))
+const posts = (await getCollection('articles'))
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 
@@ -49,9 +49,8 @@ const nextPost = getNextPost(currentPostId)
 const prevPost = getPrevPost(currentPostId)
 
 const post = Astro.props
-const { Content, headings } = await render(post)
-
 const authors = await parseAuthors(post.data.authors ?? [])
+const { Content, headings } = await render(post)
 ---
 
 <Layout
@@ -64,7 +63,7 @@ const authors = await parseAuthors(post.data.authors ?? [])
   >
     <Breadcrumbs
       items={[
-        { href: '/blog', label: 'Blog', icon: 'lucide:archive' },
+        { href: '/articles', label: 'Articles', icon: 'lucide:archive' },
         { label: post.data.title, icon: 'lucide:file-text' },
       ]}
       class="col-start-2"
@@ -129,15 +128,7 @@ const authors = await parseAuthors(post.data.authors ?? [])
         <div class="flex flex-wrap justify-center gap-2">
           {
             post.data.tags && post.data.tags.length > 0 ? (
-              post.data.tags.map((tag) => (
-                <a
-                  href={`/tags/${tag}`}
-                  class={badgeVariants({ variant: 'secondary' })}
-                >
-                  <Icon name="lucide:hash" class="size-3 -translate-x-0.5" />
-                  {tag}
-                </a>
-              ))
+              post.data.tags.map((tag) => <Tag name={tag} />)
             ) : (
               <span class="text-sm text-muted-foreground">
                 No tags available

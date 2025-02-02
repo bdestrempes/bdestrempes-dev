@@ -23,7 +23,7 @@ import icon from 'astro-icon'
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://astro-erudite.vercel.app',
+  site: 'https://bdestrempes.dev',
   integrations: [
     tailwind({
       applyBaseStyles: false,
@@ -52,7 +52,11 @@ export default defineConfig({
         {
           theme: {
             light: 'github-light-high-contrast',
-            dark: 'github-dark-high-contrast',
+            dark: 'catppuccin-mocha',
+          },
+          defaultLang: {
+            block: 'typescript',
+            inline: 'typescript',
           },
           transformers: [
             transformerNotationDiff(),

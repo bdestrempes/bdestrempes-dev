@@ -15,7 +15,7 @@ import Layout from '@/layouts/Layout.astro'
 import { getCollection } from 'astro:content'
 import 'rehype-callouts/theme/github'
 
-const blog = (await getCollection('blog'))
+const articles = (await getCollection('articles'))
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, SITE.NUM_POSTS_ON_HOMEPAGE)
@@ -26,35 +26,42 @@ const blog = (await getCollection('blog'))
     <section>
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl">👋 Hey, I'm Ben</CardTitle>
-          <CardDescription
-            >Senior Developer @ <span class="font-semibold"
-              ><Link href="https://shopify.com" external underline>Shopify</Link
-              ></span
-            ></CardDescription
-          >
+          <div class="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-3xl">👋 Hey, I'm Ben</CardTitle>
+              <CardDescription
+                >Senior Developer @ <span class="font-semibold"
+                  ><Link href="https://shopify.com" external underline
+                    >Shopify</Link
+                  ></span
+                ></CardDescription
+              >
+            </div>
+            <img
+              src="/bdestrempes-avatar.jpg"
+              alt="Benjamin Destrempes"
+              class="h-16 w-16 rounded-full object-cover"
+            />
+          </div>
         </CardHeader>
         <CardContent>
           <p class="mb-2 text-sm text-muted-foreground">
-            👨‍💻 I'm a senior frontend developer based in Saguenay, Quebec. With a
-            strong background in web development, I specialize in building
-            modern, performant web applications. Currently, I'm focused on
-            e-commerce solutions at <Link
-              href="https://shopify.com"
-              external
-              underline>Shopify</Link
-            >, where I work on creating exceptional developer and merchant
-            experiences.
+            👨‍💻 Hey! I'm a frontend dev working from the beautiful Saguenay
+            region in QC, Canada. I love building fast, modern web apps and
+            tools that don't suck. These days, I'm crafting e-commerce
+            experiences at <Link href="https://shopify.com" external underline
+              >Shopify</Link
+            >.
           </p>
           <p class="text-sm text-muted-foreground">
-            🏔️ When I'm not coding, you can find me skiing or mountain biking
-            all around the world. 🌏 I'm passionate about modern web frameworks,
-            developer tooling, and creating content to share knowledge with the
-            developer community. Check out my <Link
-              href="/blog"
+            🏔️ Outside of work, I'm probably shredding down a mountain somewhere
+            (on skis or a bike, depending on the season). I geek out about web
+            frameworks, dev tools, and sharing what I learn along the way. Take
+            a peek at my <Link
+              href="/articles"
               class="text-foreground"
-              underline>blog</Link
-            > for technical insights and development tips!
+              underline>articles</Link
+            > if you're into that kind of stuff!
           </p>
         </CardContent>
       </Card>
@@ -63,7 +70,7 @@ const blog = (await getCollection('blog'))
       <h2 class="text-2xl font-bold">Latest posts</h2>
       <ul class="not-prose flex flex-col gap-y-4">
         {
-          blog.map((post) => (
+          articles.map((post) => (
             <li>
               <BlogCard entry={post} />
             </li>
@@ -72,7 +79,7 @@ const blog = (await getCollection('blog'))
       </ul>
       <div class="flex justify-center">
         <Link
-          href="/blog"
+          href="/articles"
           class={buttonVariants({ variant: 'ghost' }) + ' group'}
         >
           See all posts <span

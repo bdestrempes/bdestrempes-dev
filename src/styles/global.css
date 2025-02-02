@@ -108,6 +108,12 @@
     /* Inline code */
     :not(pre) > code {
       @apply relative rounded bg-muted/50 px-[0.3rem] py-[0.2rem] font-mono text-sm font-medium;
+
+      /* Hide backticks in inline code */
+      &::before,
+      &::after {
+        display: none;
+      }
     }
 
     /* Code blocks */
@@ -139,7 +145,7 @@
 
       /* Code block styles */
       pre {
-        @apply static max-h-[600px] overflow-auto rounded-xl border bg-secondary/20 py-4 text-sm leading-loose;
+        @apply static overflow-auto rounded-xl border bg-secondary/20 py-4 text-sm leading-loose;
 
         /* Code block content */
         > code {
