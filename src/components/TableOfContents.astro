@@ -56,8 +56,9 @@ function buildToc(headings: Heading[]): Heading[] {
     type="always"
   >
     <nav>
-      <ul></ul>
-      {toc.map((heading) => <TableOfContentsHeading heading={heading} />)}
+      <ul class="flex flex-col gap-y-2">
+        {toc.map((heading) => <TableOfContentsHeading heading={heading} />)}
+      </ul>
     </nav>
   </ScrollArea>
 </details>
