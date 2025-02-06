@@ -9,46 +9,70 @@ const { title = '', maxWidth = '700px' } = Astro.props
 <script>
   import mermaid from 'mermaid'
 
-  // Initialize mermaid with some global settings
-  mermaid.initialize({
-    startOnLoad: true,
-    theme: 'neutral',
-    htmlLabels: true,
-    fontFamily: 'Fira Sans',
-    fontSize: 14,
-    flowchart: {
-      useMaxWidth: true,
+  /**
+   * Initializes and renders Mermaid diagrams.
+   *
+   * This needs to be called in multiple scenarios because of how Astro's View Transitions work:
+   * 1. On initial page load to render the first diagrams
+   * 2. After client-side navigation because Astro preserves scripts between pages
+   *    but Mermaid needs to process any new diagram markup that appears
+   *
+   * Without reinitialization, diagrams would only show as plain text after navigation,
+   * requiring a full page refresh to render properly.
+   */
+  function initializeMermaid() {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'neutral',
       htmlLabels: true,
-      curve: 'basis',
-      padding: 15,
-      nodeSpacing: 40,
-      rankSpacing: 40,
-      defaultRenderer: 'dagre-d3',
-      diagramPadding: 4,
-    },
-    themeVariables: {
-      // Modern, clean color scheme
-      primaryColor: '#4f46e5',
-      primaryTextColor: '#ffffff',
-      primaryBorderColor: '#4338ca',
-      lineColor: '#64748b', // Darker line color for better contrast
-      secondaryColor: '#60a5fa',
-      tertiaryColor: '#34d399',
-
-      // Node styling
-      nodeBorder: '1px',
-      mainBkg: '#ffffff',
-      nodeBkg: '#ffffff',
-      clusterBkg: '#f3f4f6',
-
-      // Text styling
-      fontSize: '14px',
       fontFamily: 'Fira Sans',
+      fontSize: 14,
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 15,
+        nodeSpacing: 40,
+        rankSpacing: 40,
+        defaultRenderer: 'dagre-d3',
+        diagramPadding: 4,
+      },
+      themeVariables: {
+        primaryColor: '#4f46e5',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#4338ca',
+        lineColor: '#64748b',
+        secondaryColor: '#60a5fa',
+        tertiaryColor: '#34d399',
 
-      // Dark mode support
-      darkMode: false,
-    },
-  })
+        // Node styling
+        nodeBorder: '1px',
+        mainBkg: '#ffffff',
+        nodeBkg: '#ffffff',
+        clusterBkg: '#f3f4f6',
+
+        // Text styling
+        fontSize: '14px',
+        fontFamily: 'Fira Sans',
+
+        darkMode: false,
+      },
+    })
+
+    // Force re-render all diagrams - this is crucial after navigation
+    // as new diagram markup needs to be processed
+    mermaid.run()
+  }
+
+  // Initialize on first page load
+  initializeMermaid()
+
+  // Re-initialize on client-side navigation:
+  // - astro:page-load: Fires when a new page is fully loaded
+  // - astro:after-swap: Fires after the view transition swap is complete
+  // We listen to both events to ensure diagrams render in all scenarios
+  document.addEventListener('astro:page-load', initializeMermaid)
+  document.addEventListener('astro:after-swap', initializeMermaid)
 </script>
 
 <figure class="my-12 w-full">
