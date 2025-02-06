@@ -1,0 +1,38 @@
+---
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+  href: string
+  class?: string
+}
+
+const { href, class: className = '' } = Astro.props
+
+// Check if the URL is external by looking for protocol or absolute URL
+const isExternal = href.match(/^(https?:)?\/\//)
+// Check if this is an in-page anchor link
+const isAnchorLink = href.startsWith('#')
+
+// Combine any passed classes with our base classes
+const combinedClasses = `${isExternal ? 'external-link' : 'article-link'} ${className}`.trim()
+
+// For external links, add target and rel attributes
+const externalProps = isExternal
+  ? {
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    }
+  : {}
+---
+
+<a href={href} class={combinedClasses} {...externalProps}>
+  <span><slot /></span>
+  {
+    !isAnchorLink &&
+      (isExternal ? (
+        <Icon name="lucide:external-link" class="ml-0.5 inline-block h-4 w-4" />
+      ) : (
+        <Icon name="lucide:arrow-up-right" class="ml-0.5 inline-block h-4 w-4" />
+      ))
+  }
+</a>
