@@ -197,12 +197,77 @@ if (await entitlements.can(user, 'advanced-analytics')) {
 
 These three types of controls work together to create a comprehensive feature management system. Here's how they compare and complement each other:
 
-| Aspect | Feature Flags | RBAC | Entitlements |
-| --- | --- | --- | --- |
-| **Lifecycle** | Often temporary | Permanent part of system | Follows business model |
-| **Implementation** | Runtime changes | Security configuration | Subscription/billing systems |
-| **Purpose** | Feature availability & testing | Access based on user roles | Access based on business rules |
-| **Scope** | Specific features/segments | System-wide permissions | Product features & limits |
+<div className="overflow-x-auto">
+  <table className="w-full border-collapse">
+    <thead className="hidden md:table-header-group bg-muted/50">
+      <tr>
+        <th className="border p-2 text-left">Aspect</th>
+        <th className="border p-2 text-left">Feature Flags</th>
+        <th className="border p-2 text-left">RBAC</th>
+        <th className="border p-2 text-left">Entitlements</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr className="md:hidden">
+        <td className="block border-t p-4" colSpan={4}>
+          <h4 className="mb-4 text-lg font-semibold">Feature Flags</h4>
+          <div className="space-y-3">
+            <p><strong className="inline-block w-32">Lifecycle:</strong> Often temporary</p>
+            <p><strong className="inline-block w-32">Implementation:</strong> Runtime changes</p>
+            <p><strong className="inline-block w-32">Purpose:</strong> Feature availability & testing</p>
+            <p><strong className="inline-block w-32">Scope:</strong> Specific features/segments</p>
+          </div>
+        </td>
+      </tr>
+      <tr className="md:hidden">
+        <td className="block border-t p-4" colSpan={4}>
+          <h4 className="mb-4 text-lg font-semibold">RBAC</h4>
+          <div className="space-y-3">
+            <p><strong className="inline-block w-32">Lifecycle:</strong> Permanent part of system</p>
+            <p><strong className="inline-block w-32">Implementation:</strong> Security configuration</p>
+            <p><strong className="inline-block w-32">Purpose:</strong> Access based on user roles</p>
+            <p><strong className="inline-block w-32">Scope:</strong> System-wide permissions</p>
+          </div>
+        </td>
+      </tr>
+      <tr className="md:hidden">
+        <td className="block border-t p-4" colSpan={4}>
+          <h4 className="mb-4 text-lg font-semibold">Entitlements</h4>
+          <div className="space-y-3">
+            <p><strong className="inline-block w-32">Lifecycle:</strong> Follows business model</p>
+            <p><strong className="inline-block w-32">Implementation:</strong> Subscription/billing systems</p>
+            <p><strong className="inline-block w-32">Purpose:</strong> Access based on business rules</p>
+            <p><strong className="inline-block w-32">Scope:</strong> Product features & limits</p>
+          </div>
+        </td>
+      </tr>
+      <tr className="hidden md:table-row">
+        <td className="border p-2"><strong>Lifecycle</strong></td>
+        <td className="border p-2">Often temporary</td>
+        <td className="border p-2">Permanent part of system</td>
+        <td className="border p-2">Follows business model</td>
+      </tr>
+      <tr className="hidden md:table-row">
+        <td className="border p-2"><strong>Implementation</strong></td>
+        <td className="border p-2">Runtime changes</td>
+        <td className="border p-2">Security configuration</td>
+        <td className="border p-2">Subscription/billing systems</td>
+      </tr>
+      <tr className="hidden md:table-row">
+        <td className="border p-2"><strong>Purpose</strong></td>
+        <td className="border p-2">Feature availability & testing</td>
+        <td className="border p-2">Access based on user roles</td>
+        <td className="border p-2">Access based on business rules</td>
+      </tr>
+      <tr className="hidden md:table-row">
+        <td className="border p-2"><strong>Scope</strong></td>
+        <td className="border p-2">Specific features/segments</td>
+        <td className="border p-2">System-wide permissions</td>
+        <td className="border p-2">Product features & limits</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 Understanding how these controls work together is crucial for implementing an effective feature management strategy. Let's look at how they can be integrated:
 
@@ -480,7 +545,3 @@ Feature flags have evolved from simple toggles to become a crucial part of moder
 ## What's Next
 
 In <ArticleLink href="/articles/feature-flags-at-scale">Part 2: Implementing Feature Flags at Scale</ArticleLink>, we'll dive deeper into practical implementation strategies, exploring patterns for larger applications and examining how to build robust feature management systems that can grow with your needs.
-
-For more details on scaling feature flags, see <ArticleLink href="/articles/feature-flags-at-scale#access-control-and-audit">Access Control and Audit</ArticleLink>.
-
-For more details on managing flag lifecycles at scale, see <ArticleLink href="/articles/feature-flags-at-scale#lifecycle-management">Lifecycle Management</ArticleLink>.
