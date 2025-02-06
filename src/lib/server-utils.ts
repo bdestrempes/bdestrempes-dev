@@ -1,7 +1,6 @@
 import { getEntry } from 'astro:content'
 
 export async function parseAuthors(authors: string[]) {
-  console.log('authors', authors)
   if (!authors || authors.length === 0) return []
 
   const parseAuthor = async (id: string) => {

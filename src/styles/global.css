@@ -57,11 +57,66 @@
     ::-webkit-scrollbar-corner {
       @apply bg-transparent;
     }
+
+    /* Add smooth scrolling behavior */
+    scroll-behavior: smooth;
+    scroll-padding-top: 2rem; /* Adjust this value based on your header height */
+  }
+
+  /* For browsers that support :target */
+  :target {
+    scroll-margin-top: 2rem; /* Matches the padding-top */
+  }
+
+  /* Ensure smooth scrolling works in Safari */
+  @supports (-webkit-hyphens: none) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   .disable-transitions,
   .disable-transitions * {
     @apply !transition-none;
+  }
+
+  /* Link icon styles */
+  .external-link,
+  .article-link {
+    @apply inline-flex items-center no-underline;
+  }
+
+  .external-link span,
+  .article-link span {
+    @apply underline decoration-muted-foreground underline-offset-[3px] hover:decoration-foreground;
+  }
+
+  .external-link svg,
+  .article-link svg {
+    @apply -mt-0.5 ml-0.5 inline-block h-4 w-4 opacity-70 transition-opacity;
+  }
+
+  .external-link:hover svg,
+  .article-link:hover svg {
+    @apply opacity-100;
+  }
+
+  /* Dark mode adjustments */
+  .dark .external-link svg,
+  .dark .article-link svg {
+    @apply opacity-60;
+  }
+
+  .dark .external-link:hover svg,
+  .dark .article-link:hover svg {
+    @apply opacity-90;
   }
 }
 
