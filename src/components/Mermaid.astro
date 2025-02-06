@@ -35,7 +35,7 @@ const { title = '', maxWidth = '700px' } = Astro.props
         nodeSpacing: 40,
         rankSpacing: 40,
         defaultRenderer: 'dagre-d3',
-        diagramPadding: 4,
+        diagramPadding: 8, // Increased padding
       },
       themeVariables: {
         primaryColor: '#4f46e5',
@@ -59,31 +59,43 @@ const { title = '', maxWidth = '700px' } = Astro.props
       },
     })
 
-    // Force re-render all diagrams - this is crucial after navigation
-    // as new diagram markup needs to be processed
+    // Force re-render all diagrams
     mermaid.run()
+
+    // Add resize handler for responsive diagrams
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const svg = entry.target.querySelector('svg')
+        if (svg) {
+          svg.style.maxWidth = '80%'
+          svg.style.height = 'auto'
+        }
+      }
+    })
+
+    // Observe all mermaid containers
+    document.querySelectorAll('.mermaid').forEach((container) => {
+      resizeObserver.observe(container)
+    })
   }
 
   // Initialize on first page load
   initializeMermaid()
 
-  // Re-initialize on client-side navigation:
-  // - astro:page-load: Fires when a new page is fully loaded
-  // - astro:after-swap: Fires after the view transition swap is complete
-  // We listen to both events to ensure diagrams render in all scenarios
+  // Re-initialize on client-side navigation
   document.addEventListener('astro:page-load', initializeMermaid)
   document.addEventListener('astro:after-swap', initializeMermaid)
 </script>
 
-<figure class="my-12 w-full">
+<figure class="mx-auto my-12 w-4/5 overflow-x-auto overflow-y-hidden">
   {
     title && (
-      <figcaption class="text-center text-lg font-medium text-gray-900 dark:text-gray-100">
+      <figcaption class="mb-4 text-center text-lg font-medium text-gray-900 dark:text-gray-100">
         {title}
       </figcaption>
     )
   }
-  <div class="relative w-full" style={`max-width: ${maxWidth}; margin: 0 auto;`}>
+  <div class="mermaid-container relative mx-auto w-full" style={`max-width: ${maxWidth};`}>
     <pre class="mermaid not-prose">
       <slot />
     </pre>
@@ -91,21 +103,43 @@ const { title = '', maxWidth = '700px' } = Astro.props
 </figure>
 
 <style>
+  /* Container styles */
+  .mermaid-container {
+    padding: 1rem 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Base mermaid styles */
   :global(.mermaid) {
     display: flex !important;
     justify-content: center !important;
     width: 100% !important;
+    min-width: 100% !important;
+    overflow: visible !important;
   }
 
+  /* SVG specific styles */
   :global(.mermaid svg) {
-    margin-left: -64px !important;
+    max-width: 100% !important;
+    height: auto !important;
+    width: 100% !important;
   }
 
-  :global(.mermaid .nodes) {
-    display: inline-block !important;
+  /* Mobile-specific adjustments */
+  @media (max-width: 768px) {
+    :global(.mermaid svg) {
+      transform: scale(0.9);
+      transform-origin: center center;
+    }
+
+    :global(.mermaid .node rect),
+    :global(.mermaid .node circle) {
+      transform: scale(0.9);
+    }
   }
 
-  /* Enhance node styling */
+  /* Node styling */
   :global(.mermaid .node rect),
   :global(.mermaid .node circle),
   :global(.mermaid .node polygon),
@@ -130,6 +164,8 @@ const { title = '', maxWidth = '700px' } = Astro.props
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     border: 1px solid #e2e8f0 !important;
     margin: 0 4px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
   }
 
   :global(.mermaid .edgeLabel foreignObject) {
@@ -137,20 +173,20 @@ const { title = '', maxWidth = '700px' } = Astro.props
     overflow: visible;
   }
 
-  /* Enhance edge styling */
+  /* Edge styling */
   :global(.mermaid .edge-pattern-solid),
   :global(.mermaid .flowchart-link) {
     stroke-width: 2px !important;
     stroke: #64748b !important;
   }
 
-  /* Add smooth transitions */
+  /* Transitions */
   :global(.mermaid .node),
   :global(.mermaid .cluster) {
     transition: transform 0.2s ease-in-out;
   }
 
-  /* Improve cluster styling */
+  /* Cluster styling */
   :global(.mermaid .cluster rect) {
     rx: 8px !important;
     ry: 8px !important;
@@ -159,28 +195,26 @@ const { title = '', maxWidth = '700px' } = Astro.props
     stroke-width: 2px !important;
   }
 
-  /* Better cluster label styling */
   :global(.mermaid .cluster .label) {
     font-size: 14px !important;
     font-weight: 600 !important;
     color: #374151 !important;
   }
 
-  /* Hide empty edge labels */
+  /* Hide empty labels */
   :global(.mermaid .edgeLabel:empty),
   :global(.mermaid .edgeLabel foreignObject:empty) {
     visibility: hidden;
     display: none;
   }
 
-  /* Hide edge labels with only whitespace */
   :global(.mermaid .edgeLabel foreignObject:has(div:empty)),
   :global(.mermaid .edgeLabel:has(div:empty)) {
     visibility: hidden;
     display: none;
   }
 
-  /* Enhance subgraph styling */
+  /* Subgraph styling */
   :global(.mermaid .subgraph) {
     stroke: #e5e7eb !important;
     stroke-width: 2px !important;
