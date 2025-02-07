@@ -3,6 +3,9 @@ dist/
 # generated types
 .astro/
 
+# cross-posts
+src/cross-posts/
+
 # cursor
 .cursorrules
 
