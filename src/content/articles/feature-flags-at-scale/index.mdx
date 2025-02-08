@@ -8,8 +8,12 @@ authors: ['bdestrempes']
 draft: false
 ---
 
-import Mermaid from '@/components/Mermaid.astro'
 import ArticleLink from '@/components/ArticleLink.astro'
+import ExcalidrawSVG from '@/components/custom/Excalidraw.astro'
+import featureFlagDependencies from '@/content/charts/feature-flags-at-scale/flag-dependencies.svg'
+import distributionMethods from '@/content/charts/feature-flags-at-scale/distribution-methods.svg'
+import impactAnalysis from '@/content/charts/feature-flags-at-scale/impact-analysis.svg'
+import cachingStrategies from '@/content/charts/feature-flags-at-scale/caching-strategies.svg'
 
 # Feature Flags Part 2 - Implementation at Scale
 
@@ -150,37 +154,12 @@ The jitter prevents synchronization of polling cycles across instances, protecti
 
 Most production deployments benefit from a hybrid approach, using different propagation methods based on the consistency requirements of each flag type:
 
-<Mermaid title="Feature Flag Distribution Strategies">
-{`
-graph TD
-    subgraph "Update Sources"
-        A[Configuration Change] --> B[Change Router]
-    end
-
-    subgraph "Distribution Methods"
-        B --> C[Real-time Updates]
-        B --> D[Message Queue]
-        B --> E[Polling System]
-    end
-
-    subgraph "Client Features"
-        C --> F[Critical Features]
-        D --> G[Standard Features]
-        E --> H[Non-critical Features]
-    end
-
-    classDef source fill:#cba6f7,color:#1e1e2e
-    classDef method fill:#a6e3a1,color:#1e1e2e
-    classDef client fill:#89b4fa,color:#1e1e2e
-
-    class A,B source
-    class C,D,E method
-    class F,G,H client
-
-`}
-
-</Mermaid>
-
+<ExcalidrawSVG
+  title="Feature Flag Distribution Strategies"
+  src={distributionMethods}
+  alt="Feature Flag Distribution Strategies"
+  caption="Feature Flag Distribution Strategies"
+/>
 ### Version Control and Conflict Resolution
 
 Version control in distributed systems centers on a fundamental challenge: managing concurrent changes reliably. If you're thinking "how hard can it be?" — well, distributed systems have a way of humbling us all. These challenges are closely related to our discussion of <ArticleLink href="#common-implementation-pitfalls">race conditions</ArticleLink> and change propagation strategies.
@@ -299,75 +278,7 @@ class RollbackPreview {
 
 To understand why thorough impact analysis is crucial, let's look at how feature flags typically depend on each other in a real-world application:
 
-<Mermaid title="Feature Flag Dependencies">
-{`
-graph TD
-    subgraph Customer-Facing
-        A["New Checkout UI
-        (Active)"]
-        F["Express Checkout
-        (Disabled)"]
-        H["Performance Mode
-        (Active)"]
-    end
-
-    subgraph API-Layer
-        B["Payment API v2
-        (Active)"]
-        J["Payment API v1
-        (Standby)"]
-        C["Address Validation
-        API"]
-        G["User Preferences
-        API"]
-    end
-
-    subgraph Backend
-        D["New Payment
-        Gateway"]
-        E["Geocoding
-        Service"]
-        I["Legacy Payment
-        System"]
-    end
-
-    %% Core to API Dependencies
-    A --> B
-    A --> C
-    F -.-> B
-    F -.-> G
-
-    %% Legacy Dependencies
-    F -. was using .-> J
-    J --> I
-
-    %% API to Service Dependencies
-    B --> D
-    C --> E
-
-    %% Performance Mode Dependencies and Conflicts
-    H --> A
-    H -. disabled .-> F
-
-    %% Migration Conflicts
-    B -. replaces .-> J
-    J -. standby .-> B
-
-    %% Styling
-    classDef core fill:#89b4fa,color:#1e1e2e,stroke:#1e1e2e
-    classDef api fill:#a6e3a1,color:#1e1e2e,stroke:#1e1e2e
-    classDef backend fill:#cba6f7,color:#1e1e2e,stroke:#1e1e2e
-    classDef conflict fill:#f38ba8,color:#1e1e2e,stroke:#1e1e2e
-    classDef legacy fill:#f5c2e7,color:#1e1e2e,stroke:#1e1e2e
-    classDef inactive fill:#6c7086,color:#1e1e2e,stroke:#1e1e2e
-
-    class A,H core
-    class B,C,G api
-    class D,E backend
-    class F inactive
-    class I,J legacy
-`}
-</Mermaid>
+<ExcalidrawSVG title="Feature Flag Dependencies" src={featureFlagDependencies} colorTheme="green" />
 
 Looking at this dependency graph, we can quickly spot some specific rollback scenarios that might cause issues:
 
@@ -426,12 +337,14 @@ Feature flags are like code — they have a lifecycle. As we saw in the <Article
 The solution requires both tooling and process. While tools can help track and manage flags, they must be coupled with clear ownership and processes. Every flag needs:
 
 **Organizational Requirements:**
+
 - A designated owner who understands its purpose
 - Clear documentation of affected systems
 - Defined criteria for retirement
 - Regular reviews and audits
 
 **Technical Implementation:**
+
 - Automated tracking of flag usage
 - Dependency management systems
 - Audit logging capabilities
@@ -480,38 +393,12 @@ Set up alerts for things that need immediate attention:
 
 Technical metrics tell you how your system is running, but business metrics tell you if your features are actually working. When you're rolling out a new feature, you need to watch both.
 
-<Mermaid title="Feature Flag Impact Analysis">
-{`
-graph TD
-    subgraph "Feature Rollout"
-        A[Feature Flag] --> B{User Group}
-        B -->|Control Group| C[Original Flow]
-        B -->|Test Group| D[New Flow]
-    end
-
-    subgraph "Metrics Collection"
-        C --> E[Control Metrics]
-        D --> F[Test Metrics]
-    end
-
-    subgraph "Analysis"
-        E --> G[Statistical Analysis]
-        F --> G
-        G --> H[Business Impact]
-        G --> I[Technical Impact]
-    end
-
-    classDef rollout fill:#89b4fa,color:#1e1e2e
-    classDef metrics fill:#a6e3a1,color:#1e1e2e
-    classDef analysis fill:#cba6f7,color:#1e1e2e
-
-    class A,B,C,D rollout
-    class E,F metrics
-    class G,H,I analysis
-
-`}
-
-</Mermaid>
+<ExcalidrawSVG
+  title="Feature Flag Impact Analysis"
+  src={impactAnalysis}
+  alt="Feature Flag Impact Analysis"
+  caption="Feature Flag Impact Analysis"
+/>
 
 The key is comparing metrics between your control group and test group. You might find surprising results — like a feature that improves one metric but hurts another. For instance, a new UI might increase engagement time but decrease conversion rates. These insights help you make informed decisions about your rollouts.
 
@@ -570,45 +457,12 @@ Performance is where the rubber meets the road. Feature flags might seem lightwe
 
 Caching isn't just an optimization — it's a necessity. Think of your feature flags like your phone's contacts: you keep your favorites just a tap away, your regular contacts on your phone, and your complete history safely backed up to the cloud. The same goes for feature flags — keep your most-used ones in memory, common ones in a shared cache, and the complete set in reliable storage.
 
-<Mermaid title="Multi-Level Caching Architecture">
-{`
-graph TB
-    subgraph Client
-        R[Request]
-    end
-
-    subgraph "Cache Layers"
-        LC[Local Cache]
-        DC[Distributed Cache]
-        PS[Primary Store]
-        UC[Update Cache]
-        RR[Result]
-        UL[Update Local]
-    end
-
-    R --> LC
-    LC -- Miss --> DC
-    DC -- Miss --> PS
-    PS --> UC
-    UC --> DC
-    LC -- Hit --> RR
-    DC -- Hit --> UL
-    UL --> RR
-    UC --> RR
-
-    classDef client fill:#89b4fa,color:#1e1e2e
-    classDef cache fill:#a6e3a1,color:#1e1e2e
-    classDef store fill:#cba6f7,color:#1e1e2e
-    classDef result fill:#cba6f7,color:#1e1e2e
-
-    class R client
-    class LC,DC,UL,UC cache
-    class PS store
-    class RR result
-
-`}
-
-</Mermaid>
+<ExcalidrawSVG
+  title="Multi-Level Caching Architecture"
+  src={cachingStrategies}
+  alt="Multi-Level Caching Architecture"
+  caption="Multi-Level Caching Architecture"
+/>
 
 Each layer serves a specific purpose:
 

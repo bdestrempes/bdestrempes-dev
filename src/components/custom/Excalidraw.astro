@@ -1,0 +1,151 @@
+---
+import type { ImageMetadata } from 'astro'
+
+interface Props {
+  src: ImageMetadata | string
+  alt: string
+  caption?: string
+}
+
+const { src, alt, caption } = Astro.props
+
+const svgUrl = typeof src === 'string' ? src : src.src
+---
+
+<figure class="excalidraw-figure">
+  <div class="excalidraw-svg" data-svg-url={svgUrl} aria-label={alt}>
+    <img src={svgUrl} alt={alt} style="display: none;" />
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<script>
+  let isProcessing = false
+
+  function modifySvg(svgString: string): string {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(svgString, 'image/svg+xml')
+    const svg = doc.documentElement
+
+    svg.setAttribute('width', '100%')
+    svg.setAttribute('height', '100%')
+    svg.classList.add('w-full', 'h-auto')
+
+    doc.querySelectorAll('text').forEach((text) => {
+      text.removeAttribute('fill')
+      text.classList.add('fill-skin-base')
+    })
+
+    doc.querySelectorAll('rect').forEach((rect) => {
+      rect.removeAttribute('fill')
+      rect.classList.add('fill-skin-soft')
+    })
+
+    doc.querySelectorAll('path').forEach((path) => {
+      path.removeAttribute('stroke')
+      path.classList.add('stroke-skin-accent')
+    })
+
+    doc.querySelectorAll('g').forEach((g) => {
+      g.classList.add('excalidraw-element')
+    })
+
+    return new XMLSerializer().serializeToString(doc)
+  }
+
+  function initExcalidrawSVG() {
+    if (isProcessing) {
+      return
+    }
+    isProcessing = true
+
+    const svgContainers = document.querySelectorAll<HTMLElement>('.excalidraw-svg')
+
+    svgContainers.forEach(async (container) => {
+      const svgUrl = container.dataset.svgUrl
+
+      if (svgUrl) {
+        try {
+          const img = container.querySelector('img')
+          if (!img) throw new Error('No image element found')
+
+          await new Promise((resolve, reject) => {
+            if (img.complete) {
+              resolve(null)
+            } else {
+              img.onload = () => {
+                resolve(null)
+              }
+              img.onerror = () => {
+                reject(new Error('Failed to load image'))
+              }
+            }
+          })
+
+          const response = await fetch(svgUrl)
+          if (!response.ok) throw new Error(`Failed to load SVG: ${response.statusText}`)
+
+          const svgText = await response.text()
+
+          const modifiedSvg = modifySvg(svgText)
+
+          container.innerHTML = modifiedSvg
+        } catch (error) {
+          console.error('Error in ExcalidrawSVG component:', error)
+          container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+            <text x="10" y="50" fill="red">Error loading SVG</text>
+          </svg>`
+        }
+      }
+    })
+
+    isProcessing = false
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initExcalidrawSVG)
+  } else {
+    initExcalidrawSVG()
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    initExcalidrawSVG()
+  })
+
+  document.addEventListener('astro:before-swap', () => {
+    isProcessing = false
+  })
+</script>
+
+<style>
+  .excalidraw-figure {
+    @apply mx-auto my-8 w-full max-w-full overflow-hidden;
+  }
+  .excalidraw-svg {
+    @apply w-full max-w-full overflow-hidden;
+  }
+  :global(.excalidraw-svg svg) {
+    @apply h-auto w-full;
+  }
+  /* text */
+  :global(.excalidraw-svg .fill-skin-base) {
+    @apply fill-[rgb(74,79,105)] dark:fill-[rgb(205,214,244)]; /* ctp-latte-text : ctp-mocha-text */
+  }
+  /* secondary lines */
+  :global(.excalidraw-svg .fill-skin-soft) {
+    @apply fill-[rgb(24,24,37)] dark:fill-[rgb(127,132,156)]; /* ctp-latte-subtext-1 : ctp-mocha-overlay-1 */
+  }
+  /* main lines */
+  :global(.excalidraw-svg .stroke-skin-accent) {
+    @apply stroke-[rgb(92,95,119)] dark:stroke-[rgb(205,214,244)]; /* ctp-latte-text : ctp-mocha-text */
+  }
+  :global(.excalidraw-svg .excalidraw-element) {
+    @apply transition-all duration-300;
+  }
+  :global(.excalidraw-svg .excalidraw-element:hover) {
+    @apply opacity-85;
+  }
+  figcaption {
+    @apply mt-4 text-center text-sm italic;
+  }
+</style>
