@@ -20,6 +20,8 @@ const svgUrl = typeof src === 'string' ? src : src.src
 </figure>
 
 <script>
+  let isProcessing = false
+
   function modifySvg(svgString: string): string {
     const parser = new DOMParser()
     const doc = parser.parseFromString(svgString, 'image/svg+xml')
@@ -62,11 +64,26 @@ const svgUrl = typeof src === 'string' ? src : src.src
           (() => {
             const el = document.createElement('div')
             el.id = 'excalidraw-debug'
-            el.style.display = 'none'
+            el.style.cssText = `
+              position: fixed;
+              bottom: 0;
+              right: 0;
+              max-width: 400px;
+              max-height: 200px;
+              overflow: auto;
+              background: rgba(0,0,0,0.8);
+              color: white;
+              font-family: monospace;
+              font-size: 12px;
+              padding: 10px;
+              z-index: 9999;
+            `
             document.body.appendChild(el)
             return el
           })()
-        debugEl.innerHTML += `[Excalidraw] ${args.join(' ')}\n`
+        const timestamp = new Date().toISOString().split('T')[1].split('.')[0]
+        debugEl.innerHTML += `[${timestamp}] ${args.join(' ')}\n`
+        debugEl.scrollTop = debugEl.scrollHeight
       }
     },
     error: (...args: any[]) => {
@@ -74,13 +91,27 @@ const svgUrl = typeof src === 'string' ? src : src.src
       if (typeof window !== 'undefined') {
         const debugEl = document.getElementById('excalidraw-debug')
         if (debugEl) {
-          debugEl.innerHTML += `[Excalidraw Error] ${args.join(' ')}\n`
+          const timestamp = new Date().toISOString().split('T')[1].split('.')[0]
+          debugEl.innerHTML += `[${timestamp}] ERROR: ${args.join(' ')}\n`
+          debugEl.scrollTop = debugEl.scrollHeight
         }
       }
     },
   }
 
+  // Add a global error handler
+  window.onerror = function (msg, url, line, col, error) {
+    logger.error('Global error:', msg, `at ${url}:${line}:${col}`, error)
+    return false
+  }
+
   function initExcalidrawSVG() {
+    if (isProcessing) {
+      logger.log('Already processing, skipping')
+      return
+    }
+    isProcessing = true
+
     logger.log('Initializing ExcalidrawSVG')
     const svgContainers = document.querySelectorAll<HTMLElement>('.excalidraw-svg')
     logger.log('Found containers:', svgContainers.length)
@@ -91,13 +122,6 @@ const svgUrl = typeof src === 'string' ? src : src.src
 
       if (svgUrl) {
         try {
-          // Check if we already processed this container
-          const existingSvg = container.querySelector('svg')
-          if (existingSvg) {
-            logger.log('Container already has SVG, skipping')
-            return
-          }
-
           // Get the img element that's already loaded
           const img = container.querySelector('img')
           logger.log('Found img element:', img?.src)
@@ -148,13 +172,28 @@ const svgUrl = typeof src === 'string' ? src : src.src
         }
       }
     })
+
+    isProcessing = false
   }
 
-  // Run on initial page load
-  document.addEventListener('DOMContentLoaded', initExcalidrawSVG)
+  // Handle both initial load and view transitions
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initExcalidrawSVG)
+  } else {
+    initExcalidrawSVG()
+  }
 
   // Run on subsequent navigation
-  document.addEventListener('astro:page-load', initExcalidrawSVG)
+  document.addEventListener('astro:page-load', () => {
+    logger.log('Page load event triggered')
+    initExcalidrawSVG()
+  })
+
+  // Clean up when leaving page
+  document.addEventListener('astro:before-swap', () => {
+    logger.log('Before swap event triggered')
+    isProcessing = false
+  })
 </script>
 
 <style>
