@@ -37,6 +37,9 @@ export default defineConfig({
         project: 'bdestrempes-dev',
         authToken: process.env.SENTRY_AUTH_TOKEN,
       },
+      replaysSessionSampleRate: 0.5,
+      replaysOnErrorSampleRate: 1.0,
+      tracesSampleRate: 1.0,
     }),
   ],
   markdown: {
