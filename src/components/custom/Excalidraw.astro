@@ -51,35 +51,97 @@ const svgUrl = typeof src === 'string' ? src : src.src
     return new XMLSerializer().serializeToString(doc)
   }
 
+  // Custom logger that works in both dev and prod
+  const logger = {
+    log: (...args: any[]) => {
+      console.log('[Excalidraw]', ...args)
+      // Also log to document for debugging in production
+      if (typeof window !== 'undefined') {
+        const debugEl =
+          document.getElementById('excalidraw-debug') ||
+          (() => {
+            const el = document.createElement('div')
+            el.id = 'excalidraw-debug'
+            el.style.display = 'none'
+            document.body.appendChild(el)
+            return el
+          })()
+        debugEl.innerHTML += `[Excalidraw] ${args.join(' ')}\n`
+      }
+    },
+    error: (...args: any[]) => {
+      console.error('[Excalidraw]', ...args)
+      if (typeof window !== 'undefined') {
+        const debugEl = document.getElementById('excalidraw-debug')
+        if (debugEl) {
+          debugEl.innerHTML += `[Excalidraw Error] ${args.join(' ')}\n`
+        }
+      }
+    },
+  }
+
   function initExcalidrawSVG() {
+    logger.log('Initializing ExcalidrawSVG')
     const svgContainers = document.querySelectorAll<HTMLElement>('.excalidraw-svg')
+    logger.log('Found containers:', svgContainers.length)
+
     svgContainers.forEach(async (container) => {
       const svgUrl = container.dataset.svgUrl
+      logger.log('Processing container with URL:', svgUrl)
+
       if (svgUrl) {
         try {
+          // Check if we already processed this container
+          const existingSvg = container.querySelector('svg')
+          if (existingSvg) {
+            logger.log('Container already has SVG, skipping')
+            return
+          }
+
           // Get the img element that's already loaded
           const img = container.querySelector('img')
+          logger.log('Found img element:', img?.src)
           if (!img) throw new Error('No image element found')
 
           // Wait for image to load
+          logger.log('Waiting for image to load...')
           await new Promise((resolve, reject) => {
             if (img.complete) {
+              logger.log('Image already loaded')
               resolve(null)
             } else {
-              img.onload = () => resolve(null)
-              img.onerror = () => reject(new Error('Failed to load image'))
+              img.onload = () => {
+                logger.log('Image loaded successfully')
+                resolve(null)
+              }
+              img.onerror = () => {
+                logger.log('Image failed to load')
+                reject(new Error('Failed to load image'))
+              }
             }
           })
 
           // Fetch the SVG content
+          logger.log('Fetching SVG from:', svgUrl)
           const response = await fetch(svgUrl)
+          logger.log('Fetch response:', response.status, response.statusText)
           if (!response.ok) throw new Error(`Failed to load SVG: ${response.statusText}`)
 
           const svgText = await response.text()
+          logger.log('SVG text length:', svgText.length)
+
           const modifiedSvg = modifySvg(svgText)
+          logger.log('Modified SVG length:', modifiedSvg.length)
+
           container.innerHTML = modifiedSvg
+          logger.log('SVG inserted into container')
         } catch (error) {
-          console.error('Error in ExcalidrawSVG component:', error)
+          logger.error('Error in ExcalidrawSVG component:', {
+            error,
+            container: container.outerHTML,
+            url: svgUrl,
+            location: window.location.href,
+          })
           container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
             <text x="10" y="50" fill="red">Error loading SVG</text>
           </svg>`
