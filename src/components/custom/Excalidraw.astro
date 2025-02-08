@@ -57,17 +57,26 @@ const svgUrl = typeof src === 'string' ? src : src.src
       const svgUrl = container.dataset.svgUrl
       if (svgUrl) {
         try {
-          const response = await fetch(svgUrl, {
-            mode: 'no-cors',
-            headers: {
-              Accept: 'image/svg+xml',
-            },
+          // Get the img element that's already loaded
+          const img = container.querySelector('img')
+          if (!img) throw new Error('No image element found')
+
+          // Wait for image to load
+          await new Promise((resolve, reject) => {
+            if (img.complete) {
+              resolve(null)
+            } else {
+              img.onload = () => resolve(null)
+              img.onerror = () => reject(new Error('Failed to load image'))
+            }
           })
-          if (!response.ok) {
-            throw new Error(`Failed to fetch SVG: ${response.statusText}`)
-          }
-          const svgData = await response.text()
-          const modifiedSvg = modifySvg(svgData)
+
+          // Fetch the SVG content
+          const response = await fetch(svgUrl)
+          if (!response.ok) throw new Error(`Failed to load SVG: ${response.statusText}`)
+
+          const svgText = await response.text()
+          const modifiedSvg = modifySvg(svgText)
           container.innerHTML = modifiedSvg
         } catch (error) {
           console.error('Error in ExcalidrawSVG component:', error)
