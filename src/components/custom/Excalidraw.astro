@@ -53,119 +53,45 @@ const svgUrl = typeof src === 'string' ? src : src.src
     return new XMLSerializer().serializeToString(doc)
   }
 
-  // Custom logger that works in both dev and prod
-  const logger = {
-    log: (...args: any[]) => {
-      console.log('[Excalidraw]', ...args)
-      // Also log to document for debugging in production
-      if (typeof window !== 'undefined') {
-        const debugEl =
-          document.getElementById('excalidraw-debug') ||
-          (() => {
-            const el = document.createElement('div')
-            el.id = 'excalidraw-debug'
-            el.style.cssText = `
-              position: fixed;
-              bottom: 0;
-              right: 0;
-              max-width: 400px;
-              max-height: 200px;
-              overflow: auto;
-              background: rgba(0,0,0,0.8);
-              color: white;
-              font-family: monospace;
-              font-size: 12px;
-              padding: 10px;
-              z-index: 9999;
-            `
-            document.body.appendChild(el)
-            return el
-          })()
-        const timestamp = new Date().toISOString().split('T')[1].split('.')[0]
-        debugEl.innerHTML += `[${timestamp}] ${args.join(' ')}\n`
-        debugEl.scrollTop = debugEl.scrollHeight
-      }
-    },
-    error: (...args: any[]) => {
-      console.error('[Excalidraw]', ...args)
-      if (typeof window !== 'undefined') {
-        const debugEl = document.getElementById('excalidraw-debug')
-        if (debugEl) {
-          const timestamp = new Date().toISOString().split('T')[1].split('.')[0]
-          debugEl.innerHTML += `[${timestamp}] ERROR: ${args.join(' ')}\n`
-          debugEl.scrollTop = debugEl.scrollHeight
-        }
-      }
-    },
-  }
-
-  // Add a global error handler
-  window.onerror = function (msg, url, line, col, error) {
-    logger.error('Global error:', msg, `at ${url}:${line}:${col}`, error)
-    return false
-  }
-
   function initExcalidrawSVG() {
     if (isProcessing) {
-      logger.log('Already processing, skipping')
       return
     }
     isProcessing = true
 
-    logger.log('Initializing ExcalidrawSVG')
     const svgContainers = document.querySelectorAll<HTMLElement>('.excalidraw-svg')
-    logger.log('Found containers:', svgContainers.length)
 
     svgContainers.forEach(async (container) => {
       const svgUrl = container.dataset.svgUrl
-      logger.log('Processing container with URL:', svgUrl)
 
       if (svgUrl) {
         try {
-          // Get the img element that's already loaded
           const img = container.querySelector('img')
-          logger.log('Found img element:', img?.src)
           if (!img) throw new Error('No image element found')
 
-          // Wait for image to load
-          logger.log('Waiting for image to load...')
           await new Promise((resolve, reject) => {
             if (img.complete) {
-              logger.log('Image already loaded')
               resolve(null)
             } else {
               img.onload = () => {
-                logger.log('Image loaded successfully')
                 resolve(null)
               }
               img.onerror = () => {
-                logger.log('Image failed to load')
                 reject(new Error('Failed to load image'))
               }
             }
           })
 
-          // Fetch the SVG content
-          logger.log('Fetching SVG from:', svgUrl)
           const response = await fetch(svgUrl)
-          logger.log('Fetch response:', response.status, response.statusText)
           if (!response.ok) throw new Error(`Failed to load SVG: ${response.statusText}`)
 
           const svgText = await response.text()
-          logger.log('SVG text length:', svgText.length)
 
           const modifiedSvg = modifySvg(svgText)
-          logger.log('Modified SVG length:', modifiedSvg.length)
 
           container.innerHTML = modifiedSvg
-          logger.log('SVG inserted into container')
         } catch (error) {
-          logger.error('Error in ExcalidrawSVG component:', {
-            error,
-            container: container.outerHTML,
-            url: svgUrl,
-            location: window.location.href,
-          })
+          console.error('Error in ExcalidrawSVG component:', error)
           container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
             <text x="10" y="50" fill="red">Error loading SVG</text>
           </svg>`
@@ -176,22 +102,17 @@ const svgUrl = typeof src === 'string' ? src : src.src
     isProcessing = false
   }
 
-  // Handle both initial load and view transitions
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initExcalidrawSVG)
   } else {
     initExcalidrawSVG()
   }
 
-  // Run on subsequent navigation
   document.addEventListener('astro:page-load', () => {
-    logger.log('Page load event triggered')
     initExcalidrawSVG()
   })
 
-  // Clean up when leaving page
   document.addEventListener('astro:before-swap', () => {
-    logger.log('Before swap event triggered')
     isProcessing = false
   })
 </script>
