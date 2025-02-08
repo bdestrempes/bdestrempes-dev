@@ -4,10 +4,7 @@ import react from '@astrojs/react'
 import sitemap from '@astrojs/sitemap'
 import tailwind from '@astrojs/tailwind'
 import { transformerCopyButton } from '@rehype-pretty/transformers'
-import {
-  transformerMetaHighlight,
-  transformerNotationDiff,
-} from '@shikijs/transformers'
+import { transformerMetaHighlight, transformerNotationDiff } from '@shikijs/transformers'
 import { defineConfig } from 'astro/config'
 import rehypeKatex from 'rehype-katex'
 import rehypeExternalLinks from 'rehype-external-links'
@@ -21,6 +18,8 @@ import sectionize from '@hbsnow/rehype-sectionize'
 
 import icon from 'astro-icon'
 
+import sentry from '@sentry/astro'
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://bdestrempes.dev',
@@ -32,6 +31,13 @@ export default defineConfig({
     mdx(),
     react(),
     icon(),
+    sentry({
+      dsn: 'https://b0aa3f8740a0943b12c19d5a9b900420@o406760.ingest.us.sentry.io/4508781164560384',
+      sourceMapsUploadOptions: {
+        project: 'bdestrempes-dev',
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+      },
+    }),
   ],
   markdown: {
     syntaxHighlight: false,
