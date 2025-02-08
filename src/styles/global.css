@@ -40,6 +40,26 @@
     --ring: 0 0% 83.1%;
   }
 
+  /* excalidraw */
+  html[data-theme='light'] {
+    --color-fill: 250, 252, 252;
+    --color-text-base: 24, 24, 37; /* ctp-mocha-base */
+    --color-accent: 148, 226, 213; /* ctp-mocha-teal */
+    --color-card: 239, 241, 245; /* ctp-mocha-surface0 */
+    --color-card-muted: 249, 226, 175; /* ctp-mocha-overlay0 */
+    --color-border: 180, 190, 254; /* ctp-mocha-lavender */
+  }
+
+  /* excalidraw */
+  html[data-theme='dark'] {
+    --color-fill: 33, 39, 55;
+    --color-text-base: 205, 214, 244; /* ctp-mocha-text */
+    --color-accent: 245, 224, 220; /* ctp-mocha-rosewater */
+    --color-card: 30, 30, 46; /* ctp-mocha-mantle */
+    --color-card-muted: 249, 226, 175; /* ctp-mocha-text */
+    --color-border: 243, 139, 168; /* ctp-mocha-red */
+  }
+
   *,
   *::before,
   *::after {
