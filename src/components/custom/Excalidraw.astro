@@ -21,6 +21,7 @@ const svgUrl = typeof src === 'string' ? src : src.src
 
 <script>
   let isProcessing = false
+  const processedContainers = new Set()
 
   function modifySvg(svgString: string): string {
     const parser = new DOMParser()
@@ -53,67 +54,53 @@ const svgUrl = typeof src === 'string' ? src : src.src
     return new XMLSerializer().serializeToString(doc)
   }
 
-  function initExcalidrawSVG() {
-    if (isProcessing) {
-      return
+  async function processSvgContainer(container: HTMLElement) {
+    if (!container || processedContainers.has(container)) return
+
+    const svgUrl = container.dataset.svgUrl
+    if (!svgUrl) return
+
+    try {
+      const response = await fetch(svgUrl)
+      if (!response.ok) throw new Error(`Failed to load SVG: ${response.statusText}`)
+
+      const svgText = await response.text()
+      const modifiedSvg = modifySvg(svgText)
+
+      container.innerHTML = modifiedSvg
+      processedContainers.add(container)
+    } catch (error) {
+      console.error('Error in ExcalidrawSVG component:', error)
+      container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+        <text x="10" y="50" fill="red">Error loading SVG</text>
+      </svg>`
     }
+  }
+
+  function initExcalidrawSVG() {
+    if (isProcessing) return
     isProcessing = true
 
     const svgContainers = document.querySelectorAll<HTMLElement>('.excalidraw-svg')
-
-    svgContainers.forEach(async (container) => {
-      const svgUrl = container.dataset.svgUrl
-
-      if (svgUrl) {
-        try {
-          const img = container.querySelector('img')
-          if (!img) throw new Error('No image element found')
-
-          await new Promise((resolve, reject) => {
-            if (img.complete) {
-              resolve(null)
-            } else {
-              img.onload = () => {
-                resolve(null)
-              }
-              img.onerror = () => {
-                reject(new Error('Failed to load image'))
-              }
-            }
-          })
-
-          const response = await fetch(svgUrl)
-          if (!response.ok) throw new Error(`Failed to load SVG: ${response.statusText}`)
-
-          const svgText = await response.text()
-
-          const modifiedSvg = modifySvg(svgText)
-
-          container.innerHTML = modifiedSvg
-        } catch (error) {
-          console.error('Error in ExcalidrawSVG component:', error)
-          container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-            <text x="10" y="50" fill="red">Error loading SVG</text>
-          </svg>`
-        }
-      }
-    })
+    svgContainers.forEach(processSvgContainer)
 
     isProcessing = false
   }
 
+  // Initialize on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initExcalidrawSVG)
   } else {
     initExcalidrawSVG()
   }
 
-  document.addEventListener('astro:page-load', () => {
-    initExcalidrawSVG()
-  })
+  // Initialize on Astro page navigation
+  document.addEventListener('astro:page-load', initExcalidrawSVG)
 
+  // Reset state before page swap
   document.addEventListener('astro:before-swap', () => {
     isProcessing = false
+    processedContainers.clear()
   })
 </script>
 
