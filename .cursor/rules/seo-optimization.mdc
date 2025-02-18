@@ -1,0 +1,200 @@
+---
+description: Guidelines for optimizing technical articles for search engines while maintaining authenticity
+globs: ["src/content/articles/**/*.mdx"]
+---
+
+# SEO Guidelines for Technical Articles
+
+## Title Optimization
+
+### Structure
+- Format: Primary Keyword - Supporting Context | Site Name
+- Length: 50-60 characters
+- Include main technical concept
+- Front-load important terms
+
+### Examples
+```markdown
+✅ Good:
+- "React Server Components: A Practical Implementation Guide"
+- "Feature Flags in Production: Real-World Examples"
+- "TypeScript Generics: Advanced Patterns and Best Practices"
+
+❌ Avoid:
+- "Understanding RSC" (too vague)
+- "A Complete, Comprehensive, In-Depth Guide to Feature Flags and How They Work in Modern Web Applications" (too long)
+- "My Thoughts on TypeScript" (not specific)
+```
+
+## Meta Description
+
+### Structure
+- Length: 150-160 characters
+- Include primary and secondary keywords naturally
+- Clear value proposition
+- Call to action
+
+### Example
+```yaml
+description: 'Learn how to implement feature flags in React applications with real-world examples, performance considerations, and scalable patterns for production deployments.'
+```
+
+## URL Structure
+
+### Guidelines
+- Use kebab-case
+- Include main keyword
+- Keep it concise
+- Avoid dates/numbers unless series
+
+### Examples
+```markdown
+✅ Good:
+/articles/feature-flags-implementation
+/articles/react-server-components-guide
+/series/typescript-patterns/generics
+
+❌ Avoid:
+/articles/2024/02/17/my-post-about-feature-flags
+/p/1234-feature-flags
+/blog/post
+```
+
+## Content Structure
+
+### Heading Hierarchy
+```markdown
+# Main Title (h1)
+## Major Section (h2)
+### Subsection (h3)
+#### Component (h4)
+```
+
+### Semantic HTML
+```astro
+<!-- ✅ Good -->
+<article>
+  <h1>Feature Flags Implementation</h1>
+  <section>
+    <h2>Getting Started</h2>
+    <!-- Content -->
+  </section>
+</article>
+
+<!-- ❌ Avoid -->
+<div class="article">
+  <div class="title">Feature Flags</div>
+  <!-- Content -->
+</div>
+```
+
+## Technical Keyword Optimization
+
+### Primary Keywords
+- Place in first paragraph
+- Use in headings naturally
+- Include in code comments
+- Add to image alt text
+
+### Secondary Keywords
+- Use variations naturally
+- Include related concepts
+- Add to section headings
+- Use in examples
+
+### Example
+```markdown
+# Feature Flags in React Applications
+
+Learn how to implement **feature toggles** (also known as **feature flags**) 
+in your React applications. This guide covers both client-side and 
+server-side **feature management** patterns...
+
+## Setting Up Feature Management
+```
+
+## Rich Results Optimization
+
+### Code Blocks
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Feature Flags Implementation Guide",
+  "description": "Learn how to implement feature flags...",
+  "author": {
+    "@type": "Person",
+    "name": "Author Name"
+  },
+  "programmingLanguage": "TypeScript",
+  "proficiencyLevel": "Advanced"
+}
+</script>
+```
+
+### Article Series
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Series",
+  "name": "Feature Flags Series",
+  "hasPart": [
+    {
+      "@type": "TechArticle",
+      "headline": "Part 1: Fundamentals",
+      "position": "1"
+    }
+  ]
+}
+</script>
+```
+
+## Internal Linking
+
+### Structure
+- Link to related articles
+- Use descriptive anchor text
+- Create topic clusters
+- Cross-reference series parts
+
+### Example
+```markdown
+Learn more about [implementing feature flags in React](mdc:articles/react-feature-flags)
+or explore our guide on [feature flag performance optimization](mdc:articles/feature-flag-performance).
+```
+
+## Technical SEO Checklist
+
+- [ ] Proper canonical URL set
+- [ ] XML sitemap updated
+- [ ] robots.txt configured
+- [ ] Meta robots tags set
+- [ ] Schema markup validated
+- [ ] Mobile responsive
+- [ ] Page speed optimized
+- [ ] No broken links
+- [ ] Images optimized
+- [ ] Code blocks indexed properly
+
+## Performance Considerations
+
+### Core Web Vitals
+- Largest Contentful Paint (LCP) < 2.5s
+- First Input Delay (FID) < 100ms
+- Cumulative Layout Shift (CLS) < 0.1
+
+### Code Block Optimization
+```typescript
+// Add language for syntax highlighting
+// Keep examples focused
+// Use code splitting for long examples
+```
+
+Remember:
+- Prioritize user value over SEO
+- Keep technical accuracy paramount
+- Use natural keyword placement
+- Focus on readability first
+- Maintain consistent structure 

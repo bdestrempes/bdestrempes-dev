@@ -1,0 +1,306 @@
+---
+description: Guidelines for discussing security implications and best practices in technical articles
+globs: ["src/content/articles/**/*.mdx"]
+---
+
+# Security Best Practices Guidelines
+
+## Secure Code Examples
+
+### Input Validation
+```typescript
+function validateInput(input: unknown): string {
+  if (typeof input !== 'string') {
+    throw new Error('Input must be a string');
+  }
+  
+  // Sanitize and validate
+  const sanitized = DOMPurify.sanitize(input);
+  if (sanitized !== input) {
+    throw new Error('Input contains unsafe content');
+  }
+  
+  // Length constraints
+  if (sanitized.length > 1000) {
+    throw new Error('Input exceeds maximum length');
+  }
+  
+  return sanitized;
+}
+```
+
+### Authentication Example
+```typescript
+import { hash, compare } from 'bcrypt';
+
+class AuthService {
+  private readonly SALT_ROUNDS = 12;
+  
+  async hashPassword(password: string): Promise<string> {
+    // Validate password requirements
+    if (!this.isPasswordValid(password)) {
+      throw new Error('Password does not meet requirements');
+    }
+    
+    return await hash(password, this.SALT_ROUNDS);
+  }
+  
+  private isPasswordValid(password: string): boolean {
+    return /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(password);
+  }
+}
+```
+
+## Security Headers
+
+### CSP Configuration
+```typescript
+// Express middleware example
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    [
+      "default-src 'self'",
+      "script-src 'self' 'nonce-{NONCE}'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: https:",
+      "connect-src 'self' https://api.example.com",
+      "frame-ancestors 'none'",
+      "form-action 'self'"
+    ].join('; ')
+  );
+  next();
+});
+```
+
+### CORS Setup
+```typescript
+import cors from 'cors';
+
+const corsOptions = {
+  origin: ['https://trusted-domain.com'],
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  credentials: true,
+  maxAge: 3600
+};
+
+app.use(cors(corsOptions));
+```
+
+## Data Protection
+
+### Encryption Example
+```typescript
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+
+class Encryption {
+  private readonly algorithm = 'aes-256-gcm';
+  private readonly keyLength = 32;
+  private readonly ivLength = 16;
+  private readonly tagLength = 16;
+
+  async encrypt(data: string, key: Buffer): Promise<string> {
+    const iv = randomBytes(this.ivLength);
+    const cipher = createCipheriv(this.algorithm, key, iv);
+    
+    let encrypted = cipher.update(data, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    
+    const tag = cipher.getAuthTag();
+    
+    // Format: iv:encrypted:tag
+    return `${iv.toString('hex')}:${encrypted}:${tag.toString('hex')}`;
+  }
+}
+```
+
+### Secure Configuration
+```typescript
+interface SecureConfig {
+  encryption: {
+    algorithm: string;
+    keyRotationDays: number;
+  };
+  rateLimit: {
+    windowMs: number;
+    maxRequests: number;
+  };
+  session: {
+    secure: boolean;
+    httpOnly: boolean;
+    sameSite: 'strict' | 'lax' | 'none';
+  };
+}
+
+const config: SecureConfig = {
+  encryption: {
+    algorithm: 'aes-256-gcm',
+    keyRotationDays: 30
+  },
+  rateLimit: {
+    windowMs: 15 * 60 * 1000,  // 15 minutes
+    maxRequests: 100
+  },
+  session: {
+    secure: true,
+    httpOnly: true,
+    sameSite: 'strict'
+  }
+};
+```
+
+## API Security
+
+### Rate Limiting
+```typescript
+import rateLimit from 'express-rate-limit';
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP',
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      error: 'Too many requests',
+      retryAfter: res.getHeader('Retry-After')
+    });
+  }
+});
+
+app.use('/api/', limiter);
+```
+
+### JWT Handling
+```typescript
+import { verify, sign } from 'jsonwebtoken';
+
+class JWTService {
+  private readonly secret: string;
+  private readonly expiresIn = '1h';
+  
+  async validateToken(token: string): Promise<any> {
+    try {
+      const decoded = await verify(token, this.secret, {
+        algorithms: ['HS256'],
+        clockTolerance: 30 // 30 seconds
+      });
+      
+      return decoded;
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        throw new Error('Token has expired');
+      }
+      throw new Error('Invalid token');
+    }
+  }
+}
+```
+
+## Error Handling
+
+### Secure Error Responses
+```typescript
+class APIError extends Error {
+  constructor(
+    message: string,
+    public statusCode: number,
+    public isOperational = true
+  ) {
+    super(message);
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+function errorHandler(
+  error: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (error instanceof APIError) {
+    // Safe error response
+    return res.status(error.statusCode).json({
+      status: 'error',
+      message: error.message
+    });
+  }
+  
+  // Log internal errors but don't expose details
+  console.error(error);
+  res.status(500).json({
+    status: 'error',
+    message: 'Internal server error'
+  });
+}
+```
+
+## Security Checklist
+
+### Implementation
+- [ ] Input validation implemented
+- [ ] Output encoding in place
+- [ ] Authentication required
+- [ ] Authorization checks
+- [ ] Rate limiting configured
+- [ ] Data encryption used
+- [ ] Secure headers set
+- [ ] Error handling secure
+- [ ] Logging sanitized
+- [ ] Dependencies updated
+
+### Documentation
+- [ ] Security implications noted
+- [ ] Authentication requirements clear
+- [ ] Rate limits documented
+- [ ] Error responses described
+- [ ] Data handling explained
+- [ ] Encryption requirements stated
+- [ ] Security headers listed
+- [ ] Best practices highlighted
+
+## Common Vulnerabilities
+
+### XSS Prevention
+```typescript
+// React example with security context
+import { SecurityContext } from './SecurityContext';
+
+function SafeComponent({ userContent }: { userContent: string }) {
+  const security = useContext(SecurityContext);
+  
+  return (
+    <div
+      dangerouslySetInnerHTML={{
+        __html: security.sanitize(userContent)
+      }}
+    />
+  );
+}
+```
+
+### CSRF Protection
+```typescript
+import csurf from 'csurf';
+
+const csrfProtection = csurf({
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  }
+});
+
+app.use(csrfProtection);
+```
+
+Remember:
+- Always validate input
+- Never trust client data
+- Use secure defaults
+- Document security implications
+- Keep dependencies updated
+- Follow least privilege principle 

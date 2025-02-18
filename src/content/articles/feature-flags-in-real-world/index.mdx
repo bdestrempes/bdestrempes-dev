@@ -16,7 +16,8 @@ import databaseSchemaEvolution from '../../charts/feature-flags-in-real-world/da
 
 # Feature Flags Part 3: Feature Flags in the Real World
 
-> [!NOTE] This article is the last of a series on feature flags. If you haven't read the previous articles, you can find them here:
+> [!NOTE]
+> This article is the last of a series on feature flags. If you haven't read the previous articles, you can find them here:
 >
 > - [Part 1: Feature Flags - Fundamentals](/articles/feature-flags-fundamentals)
 > - [Part 2: Feature Flags - Implementation at scale](/articles/feature-flags-at-scale)
@@ -193,7 +194,8 @@ This approach brings several benefits:
 
 System migrations are where feature flags truly prove their worth. They transform risky, one-shot deployments into controlled, reversible changes.
 
-> [!NOTE] The migration patterns we'll explore represent mature implementations that teams typically evolve into over time. As we discussed in [Part 1](/articles/feature-flags-fundamentals#the-evolution-of-feature-flags), it's important to:
+> [!NOTE]
+> The migration patterns we'll explore represent mature implementations that teams typically evolve into over time. As we discussed in [Part 1](/articles/feature-flags-fundamentals#the-evolution-of-feature-flags), it's important to:
 >
 > - Start with simple patterns and grow complexity as needed
 > - Build expertise with basic feature flags before attempting complex migrations
@@ -268,7 +270,8 @@ The migration moves through four phases:
 
 Each phase can be controlled independently through feature flags, enabling precise control over the migration's progress.
 
-> [!TIP] Monitor your metrics closely during each phase. Key indicators include write success rates, read performance, and validation mismatches. Increase validation percentage gradually as confidence grows.
+> [!TIP]
+> Monitor your metrics closely during each phase. Key indicators include write success rates, read performance, and validation mismatches. Increase validation percentage gradually as confidence grows.
 
 ### API Version Transitions
 
@@ -324,7 +327,8 @@ The validation phase is critical during API migrations. By comparing responses b
 
 Performance characteristics often differ between API versions. The new version might make different database queries or external service calls, affecting latency and resource usage. Gradual rollouts help identify these issues under real production load, rather than discovering them during a big-bang deployment.
 
-> [!TIP] Begin with low-impact endpoints and internal traffic. This provides real-world validation while minimizing risk.
+> [!TIP]
+> Begin with low-impact endpoints and internal traffic. This provides real-world validation while minimizing risk.
 
 ### Content Delivery Migration
 
@@ -380,7 +384,8 @@ Edge cases often emerge during CDN migrations that weren't visible in testing. C
 
 Cost management becomes particularly important during the migration period. Running parallel CDN systems temporarily increases operational costs. The staged approach helps manage this overhead by limiting duplicate traffic to only what's necessary for validation.
 
-> [!TIP] Static assets make good candidates for initial testing. They're easy to validate and have minimal user impact if issues occur.
+> [!TIP]
+> Static assets make good candidates for initial testing. They're easy to validate and have minimal user impact if issues occur.
 
 ## Crisis Management
 
@@ -410,7 +415,8 @@ For less severe issues, a gradual rollback approach often works better. By reduc
 
 Sometimes the best response is selective disabling. By targeting specific user segments or regions, you can maintain service for unaffected users while addressing issues for impacted groups. This surgical approach works particularly well when problems only manifest under specific conditions or in certain geographic regions.
 
-> [!IMPORTANT] Test emergency procedures regularly. Like any safety system, feature flags only help if they work when needed.
+> [!IMPORTANT]
+> Test emergency procedures regularly. Like any safety system, feature flags only help if they work when needed.
 
 ## Security Considerations
 
@@ -463,7 +469,8 @@ Keep sensitive flag evaluations server-side, where you can:
 - Audit access patterns
 - Revoke access immediately when needed
 
-> [!WARNING] Client-side feature flags should never control security-critical features. Always assume client code can be modified.
+> [!WARNING]
+> Client-side feature flags should never control security-critical features. Always assume client code can be modified.
 
 Your feature flag system deserves the same security attention as your authentication system. Regular audits should examine configurations, access patterns, and potential data leaks. Pay special attention to flag combinations that might create unintended access paths - like a "beta" flag accidentally bypassing payment requirements.
 
@@ -547,7 +554,8 @@ The value of feature flags becomes most apparent in critical situations—when p
 
 These metrics help justify the investment and guide system improvements. For example, measuring the time saved during incident response or the reduction in customer-impacting issues provides concrete evidence of the system's value.
 
-> [!NOTE] Consider your feature flag system as critical infrastructure that requires ongoing investment in both technical resources and team capabilities. When properly maintained, it serves as a cornerstone of reliable software delivery.
+> [!NOTE]
+> Consider your feature flag system as critical infrastructure that requires ongoing investment in both technical resources and team capabilities. When properly maintained, it serves as a cornerstone of reliable software delivery.
 
 ## Looking Forward
 
@@ -571,7 +579,8 @@ Coordinating feature states across distributed services remains a significant ch
 
 The focus remains on supporting human decision-making. While automation can handle routine monitoring and coordination, teams need to maintain control over strategic rollout decisions.
 
-> [!NOTE] Improved tooling should support rather than replace human judgment in feature management.
+> [!NOTE]
+> Improved tooling should support rather than replace human judgment in feature management.
 
 ## Conclusion
 

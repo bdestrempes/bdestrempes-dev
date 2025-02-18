@@ -1,0 +1,266 @@
+---
+description: Standards for including test cases and testing strategies in technical articles
+globs: ["src/content/articles/**/*.mdx"]
+---
+
+# Testing Examples Standards
+
+## Test Categories
+
+### Unit Tests
+```typescript
+import { describe, it, expect } from 'vitest';
+import { FeatureFlag } from './FeatureFlag';
+
+describe('FeatureFlag', () => {
+  it('should be disabled by default', () => {
+    const flag = new FeatureFlag('new-feature');
+    expect(flag.isEnabled()).toBe(false);
+  });
+
+  it('should enable feature when configured', () => {
+    const flag = new FeatureFlag('new-feature', { enabled: true });
+    expect(flag.isEnabled()).toBe(true);
+  });
+
+  it('should handle percentage rollouts', () => {
+    const flag = new FeatureFlag('gradual-feature', {
+      rolloutPercentage: 50
+    });
+    
+    // Test multiple users
+    const results = Array.from({ length: 1000 }, () => 
+      flag.isEnabledForUser(Math.random().toString())
+    );
+    
+    const enabledCount = results.filter(Boolean).length;
+    expect(enabledCount).toBeGreaterThan(400);
+    expect(enabledCount).toBeLessThan(600);
+  });
+});
+```
+
+### Integration Tests
+```typescript
+import { test, expect } from '@playwright/test';
+
+test('feature flag integration', async ({ page }) => {
+  // Setup
+  await page.goto('/admin');
+  await page.getByRole('button', { name: 'Create Flag' }).click();
+  
+  // Create new feature flag
+  await page.fill('[name="flag-key"]', 'new-feature');
+  await page.selectOption('[name="flag-type"]', 'boolean');
+  await page.click('[type="submit"]');
+  
+  // Verify flag creation
+  await expect(page.getByText('Flag created')).toBeVisible();
+  
+  // Test flag in application
+  await page.goto('/app');
+  const isEnabled = await page.evaluate(() => 
+    window.featureFlags.isEnabled('new-feature')
+  );
+  expect(isEnabled).toBe(false);
+});
+```
+
+### Performance Tests
+```typescript
+import { benchmark } from './utils/benchmark';
+
+describe('Feature Flag Performance', () => {
+  it('should evaluate flags quickly', async () => {
+    const flag = new FeatureFlag('perf-test');
+    
+    const result = await benchmark(
+      () => flag.isEnabled(),
+      { iterations: 10000 }
+    );
+    
+    expect(result.avgTime).toBeLessThan(0.1); // 0.1ms
+    expect(result.p95).toBeLessThan(0.5);     // 0.5ms
+  });
+});
+```
+
+## Test Structure
+
+### Arrange-Act-Assert
+```typescript
+describe('Feature Flag Rules', () => {
+  it('should apply complex targeting rules', () => {
+    // Arrange
+    const flag = new FeatureFlag('complex-feature', {
+      rules: [{
+        attribute: 'country',
+        operator: 'in',
+        values: ['US', 'CA']
+      }]
+    });
+    
+    const user = {
+      id: '123',
+      country: 'US',
+      role: 'admin'
+    };
+    
+    // Act
+    const isEnabled = flag.isEnabledForUser(user);
+    
+    // Assert
+    expect(isEnabled).toBe(true);
+  });
+});
+```
+
+### Test Data Setup
+```typescript
+interface TestData {
+  flags: FeatureFlag[];
+  users: User[];
+  expectations: Record<string, boolean>;
+}
+
+const testData: TestData = {
+  flags: [
+    new FeatureFlag('feature-a', { enabled: true }),
+    new FeatureFlag('feature-b', { enabled: false })
+  ],
+  users: [
+    { id: '1', role: 'admin' },
+    { id: '2', role: 'user' }
+  ],
+  expectations: {
+    'feature-a': true,
+    'feature-b': false
+  }
+};
+```
+
+## Testing Patterns
+
+### Mocking
+```typescript
+import { vi } from 'vitest';
+
+describe('Feature Flag Service', () => {
+  it('should cache flag evaluations', async () => {
+    // Setup mock
+    const storage = {
+      get: vi.fn(),
+      set: vi.fn()
+    };
+    
+    const service = new FeatureFlagService({ storage });
+    
+    // First call - should hit storage
+    await service.isEnabled('my-feature');
+    expect(storage.get).toHaveBeenCalledTimes(1);
+    
+    // Second call - should use cache
+    await service.isEnabled('my-feature');
+    expect(storage.get).toHaveBeenCalledTimes(1);
+  });
+});
+```
+
+### Test Fixtures
+```typescript
+import { test as base } from '@playwright/test';
+
+// Define custom fixture
+interface TestFixtures {
+  createFlag: (key: string, config?: any) => Promise<void>;
+}
+
+const test = base.extend<TestFixtures>({
+  createFlag: async ({ page }, use) => {
+    await use(async (key, config) => {
+      await page.goto('/admin');
+      // Implementation
+    });
+  }
+});
+
+// Use fixture in test
+test('feature flag management', async ({ createFlag, page }) => {
+  await createFlag('test-feature', { enabled: true });
+  // Test implementation
+});
+```
+
+## Error Cases
+
+### Error Handling Tests
+```typescript
+describe('Feature Flag Error Handling', () => {
+  it('should handle invalid configurations', () => {
+    expect(() => {
+      new FeatureFlag('invalid', { 
+        rolloutPercentage: 150 // Invalid percentage
+      });
+    }).toThrow('Invalid rollout percentage');
+  });
+  
+  it('should handle network failures gracefully', async () => {
+    const service = new FeatureFlagService({
+      remote: new RemoteService({ timeout: 1 })
+    });
+    
+    // Should fall back to defaults
+    const isEnabled = await service.isEnabled('my-feature');
+    expect(isEnabled).toBe(false);
+  });
+});
+```
+
+## Test Documentation
+
+### Test Description Format
+```typescript
+describe('Feature Flag System', () => {
+  /**
+   * Test: Flag Evaluation
+   * Scenario: User matches targeting rules
+   * Expected: Flag should be enabled
+   * Coverage: Core functionality
+   */
+  it('should enable flag for targeted users', () => {
+    // Test implementation
+  });
+});
+```
+
+### Test Coverage Report
+```markdown
+## Test Coverage Summary
+
+| Category          | Coverage | Critical Paths |
+|------------------|-----------|----------------|
+| Core Evaluation  | 95%      | ✅ All covered |
+| Rule Engine      | 88%      | ⚠️ Missing edge cases |
+| Storage Layer    | 92%      | ✅ All covered |
+| Network Layer    | 85%      | ⚠️ Retry logic needed |
+```
+
+## Checklist
+
+- [ ] Unit tests included
+- [ ] Integration tests shown
+- [ ] Performance tests added
+- [ ] Error cases covered
+- [ ] Clear test structure
+- [ ] Mocking examples provided
+- [ ] Test fixtures demonstrated
+- [ ] Documentation included
+- [ ] Coverage reported
+- [ ] Best practices followed
+
+Remember:
+- Keep tests focused and clear
+- Include both success and failure cases
+- Document test setup and requirements
+- Show realistic scenarios
+- Explain testing strategies 

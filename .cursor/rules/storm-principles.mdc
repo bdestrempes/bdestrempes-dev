@@ -1,0 +1,188 @@
+---
+description: Writing world-class web development blog articles
+globs: *.mdx
+---
+# STORM Principles for Writing World-Class Technical Web Development Articles
+
+## I. Source (S) - Research and Information Gathering
+
+### Primary Sources
+- Official framework/library documentation (React, Vue, Angular, etc.)
+- GitHub repositories and discussions
+- Technical specifications (W3C, ECMAScript, etc.)
+- Developer experience reports from engineering blogs
+- Performance benchmarks and metrics
+
+### Secondary Sources
+- Conference talks and technical presentations
+- Academic papers on web technologies
+- Industry surveys and reports
+- Stack Overflow discussions (carefully vetted)
+
+### Validation Requirements
+- Test all code examples in multiple environments
+- Verify browser compatibility claims
+- Cross-reference performance metrics
+- Confirm accessibility compliance
+- Check security best practices
+
+## II. Tone (T) - Writing Style and Approach
+
+### Technical Authenticity
+- Include real-world code examples with error handling
+- Show both successful and failure scenarios
+- Demonstrate debugging approaches
+- Include performance implications
+- Document browser compatibility considerations
+
+### Conversational Style
+- Open with relatable development challenges
+- Use analogies to explain complex concepts
+- Include "gotchas" and lessons learned
+- Share personal experiences with the technology
+- Maintain professional but approachable language
+
+### Example Structure
+
+```javascript
+// ❌ Instead of dry technical explanation
+const data = await fetch('/api/users');
+// ✅ Add context and real-world scenarios
+// When building a dashboard, you might need to fetch user data:
+try {
+    const response = await fetch('/api/users');
+    if (!response.ok) {
+        throw new Error(HTTP error! status: ${response.status});
+    }
+    const data = await response.json();
+} catch (error) {
+    console.error('Failed to fetch users:', error);
+    // Show user-friendly error message
+    showErrorNotification('Unable to load user data');
+}
+```
+
+
+## III. Objectives (O) - Clear Learning Goals
+
+### Section-Level Goals
+1. Understanding the Concept
+   - Define the web development concept clearly
+   - Explain where it fits in the development stack
+   - Compare with alternative approaches
+
+2. Implementation Knowledge
+   - Step-by-step setup instructions
+   - Configuration requirements
+   - Common pitfalls and solutions
+
+3. Best Practices
+   - Performance optimization techniques
+   - Security considerations
+   - Accessibility requirements
+   - Testing strategies
+
+### Example Learning Objectives
+
+After reading this section on React Server Components, you will:
+- Understand the difference between server and client components
+- Know when to use each type of component
+- Be able to implement basic server components
+- Understand the performance implications
+- Know how to debug common issues
+
+## IV. Research (R) - Technical Depth
+
+### Implementation Details
+- Include complete working examples
+- Show file structure and configuration
+- Document dependencies and versions
+- Provide setup instructions
+- Include error handling
+
+### Validation Steps
+- Performance testing methodology
+- Security audit procedures
+- Accessibility testing
+- Cross-browser testing
+- Mobile responsiveness checks
+
+### Example Research Documentation
+
+Testing Environment:
+- Node.js v18.0.0
+- React v18.2.0
+- Next.js v13.4.0
+- Chrome 120, Firefox 120, Safari 17
+- Tested on Windows 11, macOS 14, Ubuntu 22.04
+
+## V. Messaging (M) - Clear Communication
+
+### Article Structure
+1. Introduction
+   - Hook: Real-world problem statement
+   - Context: Why this solution matters
+   - Preview: What will be covered
+
+2. Technical Sections
+   - Concept explanation
+   - Code implementation
+   - Best practices
+   - Common pitfalls
+
+3. Conclusion
+   - Key takeaways
+   - Next steps
+   - Additional resources
+
+### Visual Elements
+- Code snippets with syntax highlighting
+- System architecture diagrams
+- Performance comparison charts
+- Browser compatibility tables
+- Step-by-step screenshots
+
+### Example Messaging Format
+
+# Understanding React Server Components
+
+[Problem Statement]
+Modern web applications often struggle with initial page load performance and SEO optimization...
+
+[Solution Overview]
+React Server Components offer a new approach to rendering that combines the best of server-side and client-side rendering...
+
+[Implementation]
+Let's build a real-world example using Server Components...
+
+[Best Practices]
+When implementing Server Components, consider these key principles...
+
+[Common Pitfalls]
+Watch out for these common mistakes...
+
+## VI. Success Validation
+
+### Technical Metrics
+- Page load time improvements
+- Time to Interactive (TTI)
+- First Contentful Paint (FCP)
+- Lighthouse scores
+- Bundle size reduction
+
+### Reader Success Indicators
+- Code implementation success rate
+- Comprehension check results
+- Reader feedback and questions
+- Social media sharing metrics
+- GitHub repository stars
+
+### Example Success Metrics
+
+Implementation Results:
+- 40% reduction in bundle size
+- 60% improvement in TTI
+- 95% success rate in reader implementation
+- 80% positive feedback from production deployments
+
+Remember: The goal is to create content that is both technically accurate and practically useful for web developers at all skill levels.

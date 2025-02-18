@@ -1,0 +1,138 @@
+---
+description: Standards for including code examples in technical articles
+globs: ["src/content/articles/**/*.mdx"]
+---
+
+# Code Example Standards
+
+## Code Block Requirements
+1. **Context**
+   - Purpose and goal of the code
+   - Environment/setup requirements
+   - Prerequisites and dependencies
+   - Expected outcome
+   - Performance implications
+
+2. **Format**
+   - Appropriate syntax highlighting
+   - Line numbers for reference
+   - Descriptive comments
+   - Proper error handling
+   - Consistent indentation
+
+3. **Validation**
+   - Tested and verified working
+   - Environment versions noted
+   - Edge cases considered
+   - Performance characteristics documented
+   - Security implications noted
+
+## Example Types
+
+1. **Minimal Examples**
+   ```typescript
+   // ✅ Good: Focused, single-purpose example
+   const toggleFeature = (featureKey: string): boolean => {
+     return features.isEnabled(featureKey);
+   };
+
+   // ❌ Bad: Too many concepts at once
+   const complexToggle = async (key: string, user: User) => {
+     const isEnabled = await features.check(key);
+     if (isEnabled && user.hasPermission) {
+       analytics.track('feature_used');
+       return performComplexOperation();
+     }
+   };
+   ```
+
+2. **Real-world Examples**
+   ```typescript
+   // Production-grade example with error handling
+   async function fetchUserFeatures(userId: string): Promise<FeatureSet> {
+     try {
+       // Attempt to fetch from cache first
+       const cached = await cache.get(`features:${userId}`);
+       if (cached) return JSON.parse(cached);
+
+       // Fallback to API call
+       const response = await api.get(`/users/${userId}/features`);
+       if (!response.ok) {
+         throw new Error(`Failed to fetch features: ${response.status}`);
+       }
+
+       const features = await response.json();
+       await cache.set(`features:${userId}`, JSON.stringify(features));
+       return features;
+     } catch (error) {
+       logger.error('Feature fetch failed:', error);
+       return DEFAULT_FEATURES;
+     }
+   }
+   ```
+
+3. **Anti-patterns**
+   ```typescript
+   // ❌ Anti-pattern: Global state mutation
+   let globalFeatures = {};
+   function updateFeatures(features) {
+     globalFeatures = features;  // Avoid global state
+   }
+
+   // ✅ Better: Immutable state management
+   const FeatureContext = createContext<Features>(DEFAULT_FEATURES);
+   function useFeatures() {
+     return useContext(FeatureContext);
+   }
+   ```
+
+## Code Style Guidelines
+
+### Naming Conventions
+- Clear, descriptive variable names
+- Consistent casing (camelCase for variables, PascalCase for types)
+- Avoid abbreviations unless common (e.g., `id`, `url`)
+
+### Comments and Documentation
+```typescript
+/**
+ * Checks if a feature is enabled for a specific user
+ * @param featureKey - Unique identifier for the feature
+ * @param userId - User to check feature access for
+ * @returns Promise resolving to boolean indicating feature status
+ * @throws {FeatureError} If feature check fails
+ */
+async function isFeatureEnabled(
+  featureKey: string,
+  userId: string
+): Promise<boolean> {
+  // Implementation...
+}
+```
+
+### Error Handling
+```typescript
+try {
+  await feature.enable(key);
+} catch (error) {
+  if (error instanceof FeatureError) {
+    logger.error('Feature toggle failed:', error);
+    metrics.increment('feature.toggle.error');
+  }
+  throw error;  // Re-throw for upstream handling
+}
+```
+
+## Code Block Formatting
+```markdown
+\```typescript
+// Code here
+\```
+```
+
+Remember:
+- Always test code examples before including them
+- Include error handling in production examples
+- Show both successful and error paths
+- Document assumptions and prerequisites
+- Consider security implications 

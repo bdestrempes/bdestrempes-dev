@@ -1,0 +1,207 @@
+---
+description: Meta-rules for managing and updating technical writing guidelines
+globs: ["src/content/articles/**/*.mdx", "src/content/**/*.md"]
+---
+
+# Meta-Rules for Technical Writing Guidelines
+
+## Rule Management Principles
+
+### Rule Precedence
+1. Explicit user instructions in current conversation
+2. Existing MDC rules
+3. Default behavior
+
+### Rule Conflict Resolution
+```typescript
+interface RuleConflict {
+  type: 'contradiction' | 'extension' | 'new_requirement';
+  existingRule?: {
+    name: string;
+    section: string;
+    content: string;
+  };
+  newRequirement: string;
+  suggestedAction: 'update' | 'create' | 'merge';
+}
+
+function resolveConflict(conflict: RuleConflict): void {
+  switch (conflict.type) {
+    case 'contradiction':
+      // Suggest update to existing rule
+      suggestRuleUpdate(conflict.existingRule, conflict.newRequirement);
+      break;
+    case 'extension':
+      // Extend existing rule
+      extendExistingRule(conflict.existingRule, conflict.newRequirement);
+      break;
+    case 'new_requirement':
+      // Create new rule
+      createNewRule(conflict.newRequirement);
+      break;
+  }
+}
+```
+
+## Rule Update Protocol
+
+### Detection Phase
+- Monitor user requests for deviations from existing rules
+- Identify missing guidelines in current ruleset
+- Note recurring patterns in user requests
+- Flag contradictions with existing rules
+
+### Analysis Phase
+```typescript
+interface RuleAnalysis {
+  request: string;
+  matchingRules: string[];
+  gaps: string[];
+  suggestedUpdates: {
+    ruleFile: string;
+    section: string;
+    currentContent: string;
+    proposedContent: string;
+    justification: string;
+  }[];
+}
+```
+
+### Response Protocol
+1. Acknowledge user request
+2. Identify relevant existing rules
+3. Propose rule updates or creation
+4. Implement changes upon approval
+
+## Rule Creation Guidelines
+
+### New Rule Template
+```markdown
+---
+description: Clear description of the rule's purpose
+globs: ["relevant/file/patterns/**/*"]
+---
+
+# Rule Title
+
+## Purpose
+- Primary objective
+- Scope of application
+- Expected outcomes
+
+## Guidelines
+1. Main principles
+2. Specific requirements
+3. Examples of application
+
+## Examples
+\```typescript
+// Implementation examples
+\```
+
+## Checklist
+- [ ] Key requirements
+- [ ] Validation points
+
+## Remember
+- Key principles
+- Important considerations
+```
+
+## Rule Update Process
+
+### Update Workflow
+```mermaid
+graph TD
+    A[Detect Deviation] --> B[Analyze Impact]
+    B --> C{Type of Change}
+    C -->|Modification| D[Update Existing]
+    C -->|Addition| E[Create New Rule]
+    C -->|Merge| F[Combine Rules]
+    D --> G[Propose Changes]
+    E --> G
+    F --> G
+    G --> H[User Approval]
+    H --> I[Implement Changes]
+```
+
+### Change Documentation
+```typescript
+interface RuleChange {
+  timestamp: Date;
+  type: 'update' | 'create' | 'merge';
+  ruleFile: string;
+  changes: {
+    before?: string;
+    after: string;
+    reason: string;
+  };
+  userApproved: boolean;
+}
+```
+
+## Agent Behavior Guidelines
+
+### When User Request Conflicts with Rules
+1. Acknowledge the request
+2. Identify affected rules
+3. Propose specific updates
+4. Wait for user approval
+5. Implement approved changes
+
+### When No Relevant Rule Exists
+1. Note the gap in coverage
+2. Propose new rule creation
+3. Suggest rule content
+4. Create upon approval
+
+### Example Response
+```markdown
+I notice your request to [specific request] differs from our current guidelines in [rule name].
+
+We could either:
+1. Update the existing rule to include:
+   ```diff
+   - Current guideline
+   + Proposed update
+   ```
+   
+2. Create a new rule specifically for:
+   - [New requirement]
+   - [Implementation details]
+   
+Would you like me to proceed with either option?
+```
+
+## Maintenance Requirements
+
+### Regular Review
+- Monitor rule effectiveness
+- Track user override patterns
+- Update examples for relevance
+- Remove obsolete guidelines
+
+### Version Control
+- Document all changes
+- Maintain change history
+- Track rule dependencies
+- Update affected rules
+
+## Checklist
+
+- [ ] Request analyzed against existing rules
+- [ ] Conflicts identified
+- [ ] Updates proposed
+- [ ] User approval obtained
+- [ ] Changes implemented
+- [ ] Documentation updated
+- [ ] Related rules reviewed
+- [ ] Examples validated
+
+Remember:
+- Always prioritize user needs
+- Maintain consistency across rules
+- Document change rationale
+- Seek explicit approval
+- Update related rules
+- Keep examples current 

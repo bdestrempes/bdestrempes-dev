@@ -1,0 +1,119 @@
+---
+description: Pre-publication checklist for technical articles
+globs: ["src/content/articles/**/*.mdx"]
+---
+
+# Technical Article Publication Checklist
+
+## Content Structure
+- [ ] Clear introduction with problem statement
+- [ ] Logical flow of concepts
+- [ ] Proper heading hierarchy (h1 → h2 → h3)
+- [ ] Consistent terminology throughout
+- [ ] Strong conclusion with next steps
+
+## Technical Quality
+- [ ] Code examples tested and verified
+- [ ] Technical accuracy reviewed
+- [ ] Performance implications discussed
+- [ ] Security considerations addressed
+- [ ] Browser/environment compatibility noted
+- [ ] Dependencies and versions specified
+- [ ] Error handling demonstrated
+
+## Code Examples
+- [ ] Syntax highlighting used
+- [ ] Error handling included
+- [ ] Comments explain complex parts
+- [ ] Consistent formatting
+- [ ] Complete and self-contained
+- [ ] Security best practices followed
+- [ ] Performance considerations noted
+
+## Diagrams and Visuals
+- [ ] Technical diagrams included where helpful
+- [ ] Alt text provided for all images
+- [ ] Dark/light mode support
+- [ ] Responsive scaling tested
+- [ ] Source files included
+- [ ] Consistent style with guidelines
+
+## Accessibility
+- [ ] Proper heading structure
+- [ ] Alt text for all images
+- [ ] Sufficient color contrast
+- [ ] No reliance on color alone
+- [ ] Code blocks properly marked
+- [ ] Links have descriptive text
+- [ ] Tables have proper headers
+
+## SEO and Metadata
+- [ ] Title is descriptive and unique
+- [ ] Description is compelling (150-160 chars)
+- [ ] Keywords naturally incorporated
+- [ ] Tags are relevant and consistent
+- [ ] Series links correct (if applicable)
+- [ ] Canonical URL set correctly
+- [ ] Social media preview tested
+
+## Frontmatter Example
+```yaml
+---
+title: 'Understanding Feature Flags: A Comprehensive Guide'
+description: 'Learn how to implement feature flags in your applications with real-world examples and best practices for scalable solutions.'
+date: 2024-02-17
+authors: ['username']
+tags: ['feature-flags', 'architecture', 'best-practices']
+series: 'feature-flags'
+seriesOrder: 1
+draft: false
+---
+```
+
+## Links and References
+- [ ] Internal links work correctly
+- [ ] External links open in new tabs
+- [ ] Reference links are valid
+- [ ] Series navigation correct
+- [ ] Author links accurate
+- [ ] Related articles linked
+
+## Writing Quality
+- [ ] Spelling and grammar checked
+- [ ] Technical terms explained
+- [ ] Consistent voice and tone
+- [ ] No unexplained acronyms
+- [ ] Clear and concise writing
+- [ ] Professional language used
+
+## Reader Experience
+- [ ] Prerequisites clearly stated
+- [ ] Learning objectives defined
+- [ ] Progressive complexity
+- [ ] Examples build on each other
+- [ ] Key takeaways summarized
+- [ ] Next steps provided
+
+## Performance
+- [ ] Images optimized
+- [ ] Code blocks not too long
+- [ ] No unnecessary imports
+- [ ] Lazy loading used where appropriate
+- [ ] Resource sizes reasonable
+- [ ] Page load time tested
+
+## Final Review
+- [ ] Technical review completed
+- [ ] Editorial review completed
+- [ ] Author bio updated
+- [ ] Social sharing tested
+- [ ] Mobile rendering checked
+- [ ] Print layout verified
+- [ ] RSS feed validated
+
+Remember:
+- Quality over quantity
+- Technical accuracy is paramount
+- Reader experience is crucial
+- Accessibility cannot be an afterthought
+- SEO should feel natural, not forced 

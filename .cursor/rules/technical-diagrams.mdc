@@ -1,0 +1,137 @@
+---
+description: Standards for technical diagrams and visualizations in articles
+globs: ["src/content/articles/**/*.mdx"]
+---
+
+# Technical Diagram Standards
+
+## Diagram Types and Requirements
+
+1. **Architecture Diagrams**
+   - System components clearly labeled
+   - Data flow directions indicated
+   - Integration points marked
+   - Scale indicators where relevant
+   - Clear hierarchy of components
+   - Environment boundaries marked
+
+2. **Flow Charts**
+   - Clear start and end points
+   - Decision points clearly marked
+   - Error paths in red
+   - Success paths in green
+   - Consistent flow direction
+   - Numbered steps where applicable
+
+3. **Sequence Diagrams**
+   - Actor/system labels at top
+   - Time flows top to bottom
+   - Async operations marked
+   - Error scenarios included
+   - Clear return values
+   - Timing indicators where relevant
+
+## Visual Standards
+
+### Color Scheme
+- Primary: #007AFF (Blue)
+- Success: #34C759 (Green)
+- Warning: #FF9500 (Orange)
+- Error: #FF3B30 (Red)
+- Neutral: #8E8E93 (Gray)
+
+### Typography
+- Title: 24px, Bold
+- Headings: 18px, Semi-bold
+- Labels: 14px, Regular
+- Notes: 12px, Italic
+- Font Family: System UI
+
+### Layout
+- Left-to-right flow for architecture
+- Top-to-bottom flow for sequences
+- Consistent spacing (20px between elements)
+- Clear grouping with borders/backgrounds
+- Maximum width: 800px
+- Minimum element size: 40px
+
+## Accessibility Requirements
+
+### Alt Text Structure
+```markdown
+![Architecture diagram showing the feature flag system with three main components: API Gateway, Flag Service, and Database. Data flows from left to right, with the API Gateway handling client requests, the Flag Service managing feature states, and the Database storing configurations.](./architecture-diagram.svg)
+```
+
+### Color Requirements
+- Minimum contrast ratio: 4.5:1
+- Don't rely on color alone
+- Use patterns/shapes for distinction
+- Support dark/light modes
+- Provide high contrast version
+
+### Text Requirements
+- Minimum font size: 12px
+- Clear font family
+- No text in raster images
+- SVG text elements preferred
+
+## Tools and Export
+
+### Excalidraw Setup
+```typescript
+const diagramConfig = {
+  theme: 'light',
+  exportScale: 2,
+  exportWithBackground: true,
+  exportWithDarkMode: false,
+  gridSize: 20,
+};
+```
+
+### Export Formats
+- SVG for web (preferred)
+- PNG as fallback
+- PDF for print
+- Include source files
+
+### Responsive Design
+- Viewbox set correctly
+- Preserve aspect ratio
+- Min-width defined
+- Max-width defined
+- Mobile-friendly scaling
+
+## Example Implementation
+
+```astro
+---
+import Excalidraw from '@/components/custom/Excalidraw.astro';
+---
+
+<Excalidraw
+  src="./architecture-diagram.excalidraw"
+  alt="Feature flag system architecture"
+  darkMode={false}
+  scale={2}
+/>
+```
+
+## Checklist
+
+- [ ] Diagram follows type-specific requirements
+- [ ] Colors meet accessibility standards
+- [ ] Typography is consistent and readable
+- [ ] Alt text is descriptive and complete
+- [ ] Source files are included
+- [ ] Responsive behavior tested
+- [ ] Dark/light mode support
+- [ ] Export formats provided
+- [ ] Consistent with style guide
+- [ ] Technical accuracy verified
+
+Remember:
+- Keep diagrams simple and focused
+- Ensure technical accuracy
+- Test in both dark/light modes
+- Verify mobile responsiveness
+- Include source files for future updates 

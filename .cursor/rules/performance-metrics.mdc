@@ -1,0 +1,255 @@
+---
+description: Guidelines for including and discussing performance metrics in technical articles
+globs: ["src/content/articles/**/*.mdx"]
+---
+
+# Performance Metrics Guidelines
+
+## Core Web Vitals
+
+### Metrics Overview
+```typescript
+interface CoreWebVitals {
+  LCP: number;  // Largest Contentful Paint
+  FID: number;  // First Input Delay
+  CLS: number;  // Cumulative Layout Shift
+  INP: number;  // Interaction to Next Paint
+}
+
+const targets = {
+  LCP: 2500,    // milliseconds
+  FID: 100,     // milliseconds
+  CLS: 0.1,     // score
+  INP: 200      // milliseconds
+};
+```
+
+### Measurement Example
+```typescript
+import { onCLS, onFID, onLCP } from 'web-vitals';
+
+// Report Core Web Vitals
+function reportVitals({ name, value, id }: Metric) {
+  console.log(`${name}: ${value}`);
+  // Send to analytics
+  analytics.track('web_vital', { name, value, id });
+}
+
+onCLS(reportVitals);
+onFID(reportVitals);
+onLCP(reportVitals);
+```
+
+## Performance Benchmarking
+
+### Setup
+```typescript
+interface BenchmarkResult {
+  operation: string;
+  iterations: number;
+  totalTime: number;
+  avgTime: number;
+  memory?: MemoryUsage;
+}
+
+function benchmark(
+  operation: () => void,
+  iterations: number = 1000
+): BenchmarkResult {
+  const start = performance.now();
+  
+  for (let i = 0; i < iterations; i++) {
+    operation();
+  }
+  
+  const end = performance.now();
+  const totalTime = end - start;
+  
+  return {
+    operation: operation.name,
+    iterations,
+    totalTime,
+    avgTime: totalTime / iterations
+  };
+}
+```
+
+### Example Usage
+```typescript
+// Compare feature flag implementations
+const results = benchmark(() => {
+  featureFlags.isEnabled('my-feature');
+}, 10000);
+
+console.table(results);
+```
+
+## Memory Profiling
+
+### Heap Snapshot
+```typescript
+interface MemoryUsage {
+  heapUsed: number;
+  heapTotal: number;
+  external: number;
+  arrayBuffers: number;
+}
+
+function getMemoryUsage(): MemoryUsage {
+  return process.memoryUsage();
+}
+```
+
+### Memory Leak Detection
+```typescript
+let measurements: MemoryUsage[] = [];
+
+function trackMemory(operation: () => void): void {
+  const before = getMemoryUsage();
+  operation();
+  const after = getMemoryUsage();
+  
+  measurements.push({
+    heapUsed: after.heapUsed - before.heapUsed,
+    heapTotal: after.heapTotal - before.heapTotal,
+    external: after.external - before.external,
+    arrayBuffers: after.arrayBuffers - before.arrayBuffers
+  });
+}
+```
+
+## Network Performance
+
+### Request Timing
+```typescript
+interface RequestMetrics {
+  dns: number;
+  tcp: number;
+  ttfb: number;
+  download: number;
+  total: number;
+}
+
+async function measureRequest(url: string): Promise<RequestMetrics> {
+  const start = performance.now();
+  const response = await fetch(url);
+  const end = performance.now();
+  
+  const timing = performance.getEntriesByName(url)[0] as PerformanceResourceTiming;
+  
+  return {
+    dns: timing.domainLookupEnd - timing.domainLookupStart,
+    tcp: timing.connectEnd - timing.connectStart,
+    ttfb: timing.responseStart - timing.requestStart,
+    download: timing.responseEnd - timing.responseStart,
+    total: end - start
+  };
+}
+```
+
+## Data Visualization
+
+### Chart Configuration
+```typescript
+const perfChart = {
+  type: 'bar',
+  data: {
+    labels: ['Implementation A', 'Implementation B'],
+    datasets: [{
+      label: 'Average Response Time (ms)',
+      data: [150, 90],
+      backgroundColor: ['#34C759', '#007AFF']
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+};
+```
+
+### Markdown Table
+```markdown
+| Implementation | Avg Time (ms) | Memory (MB) | p95 (ms) |
+|----------------|---------------|-------------|-----------|
+| Version 1.0    | 125          | 45.2        | 180       |
+| Version 2.0    | 85           | 42.8        | 130       |
+```
+
+## Performance Reporting
+
+### Metrics Dashboard
+```typescript
+interface PerformanceReport {
+  timestamp: Date;
+  environment: string;
+  metrics: {
+    responseTime: number[];
+    throughput: number;
+    errorRate: number;
+    cpuUsage: number;
+    memoryUsage: number;
+  };
+}
+
+function generateReport(): PerformanceReport {
+  // Implementation
+}
+```
+
+## Best Practices
+
+### Data Collection
+- Use statistically significant sample sizes
+- Test in multiple environments
+- Account for outliers
+- Document test conditions
+- Include error margins
+
+### Presentation
+- Use clear visualizations
+- Provide context for numbers
+- Compare against baselines
+- Show improvement percentages
+- Include methodology
+
+### Example Results Format
+```markdown
+## Performance Improvements
+
+Our new implementation achieved:
+- 40% reduction in average response time
+- 25% lower memory usage
+- 60% faster cold start
+- 15% improvement in p95 latency
+
+Testing conditions:
+- Environment: Production
+- Sample size: 100,000 requests
+- Duration: 7 days
+- Hardware: Standard t3.medium instances
+```
+
+## Checklist
+
+- [ ] Metrics are clearly defined
+- [ ] Testing methodology documented
+- [ ] Sample sizes reported
+- [ ] Error margins included
+- [ ] Visualizations provided
+- [ ] Context given for numbers
+- [ ] Comparisons are fair
+- [ ] Outliers addressed
+- [ ] Environment specified
+- [ ] Reproducible results
+
+Remember:
+- Always include methodology
+- Provide context for metrics
+- Use appropriate visualizations
+- Document test conditions
+- Be transparent about limitations 

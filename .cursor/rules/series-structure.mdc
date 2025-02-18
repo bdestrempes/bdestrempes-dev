@@ -1,0 +1,71 @@
+---
+description: Guidelines for creating and maintaining article series
+globs: ["src/content/articles/**/**/index.mdx"]
+---
+
+# Technical Article Series Guidelines
+
+## Series Structure
+1. **Series Introduction Article**
+   - Clear overview of all parts
+   - Value proposition for readers
+   - Target audience definition
+   - Prerequisites if any
+   - Estimated time investment
+
+2. **Individual Articles**
+   - Consistent naming pattern
+   - Cross-linking between articles
+   - Progressive complexity
+   - Self-contained value
+   - Clear prerequisites
+
+## Series Metadata
+- Use consistent series tag in frontmatter
+- Maintain chronological order with dates
+- Link previous/next articles
+- Keep series overview updated
+- Use consistent author attribution
+
+## Navigation Elements
+- Table of contents for series
+- Progress indicators showing current part
+- Clear part numbers in titles
+- Series navigation component at top/bottom
+- Breadcrumb navigation
+
+## Quality Checklist
+- [ ] Series introduction article exists
+- [ ] All parts are cross-linked correctly
+- [ ] Consistent formatting across series
+- [ ] Progressive complexity maintained
+- [ ] Series overview is up to date
+- [ ] Prerequisites clearly stated
+- [ ] Target audience defined
+- [ ] Estimated reading time provided
+- [ ] Series tag in frontmatter
+- [ ] Navigation elements present
+
+## Series Frontmatter Example
+```yaml
+---
+title: 'Part 1: Understanding Feature Flags'
+description: 'First article in the feature flags series covering fundamental concepts'
+date: 2024-02-01
+series: 'feature-flags'
+seriesOrder: 1
+totalParts: 3
+authors: ['username']
+tags: ['series', 'feature-flags', 'fundamentals']
+---
+```
+
+## Cross-linking Example
+```mdx
+import ArticleLink from '@/components/ArticleLink.astro'
+
+**Previous:** <ArticleLink href="/articles/series-intro">Series Introduction</ArticleLink>
+**Next:** <ArticleLink href="/articles/part-2">Part 2: Advanced Concepts</ArticleLink>
+```
+
+Remember: Each article in a series should provide value on its own while contributing to the larger narrative. 
