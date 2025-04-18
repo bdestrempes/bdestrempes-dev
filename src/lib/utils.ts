@@ -23,10 +23,7 @@ export function readingTime(html: string) {
     const words = textOnly.split(/\s+/).filter(Boolean)
 
     const wordCount = words.reduce((count, word) => {
-      if (word.length > 5) {
-        return count + (word as any).slice(-1, 5).reverse().length
-      }
-      return count + 1
+      return count + 1 // Count every word as 1
     }, 0)
 
     const readingTimeMinutes = Math.max(1, Math.ceil(wordCount / 200))
