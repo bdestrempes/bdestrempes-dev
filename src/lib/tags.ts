@@ -9,6 +9,7 @@ export const tagColors = {
   typescript:
     'bg-blue-100 dark:bg-blue-900/30 text-blue-900 dark:text-blue-100',
   react: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-900 dark:text-cyan-100',
+  node: 'bg-green-100 dark:bg-green-900/30 text-green-900 dark:text-green-100',
   testing: 'bg-rose-100 dark:bg-rose-900/30 text-rose-900 dark:text-rose-100',
   performance:
     'bg-lime-100 dark:bg-lime-900/30 text-lime-900 dark:text-lime-100',
